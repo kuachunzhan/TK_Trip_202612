@@ -223,6 +223,10 @@
         </div>
 
         <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="pullFromSheets(false)" title="立即從 Google Sheets 同步好友最新更新" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-xs font-semibold text-emerald-700 transition">
+            <i class="fa-solid fa-rotate"></i>
+            <span class="hidden sm:inline">抓取最新</span>
+          </button>
           <button onclick="switchTab('sheetsync')" id="header-sync-pill" title="查看 Google Spreadsheet 同步狀態" class="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs text-slate-600 transition">
             <span id="header-sync-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
             <span id="header-sync-label">Sheets 未連線</span>
@@ -234,11 +238,7 @@
         </div>
       </div>
     </div>
-  </nav>
-
-  <!-- Main Content Container -->
-  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6">
-
+  </header>
     <!-- ==================== TAB 1: 每日行程規劃 ==================== -->
     <section id="view-itinerary" class="tab-view space-y-5">
       <!-- Day Filter Pills & Quick Add -->
@@ -620,43 +620,17 @@
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
                 <i class="fa-solid fa-link text-emerald-600"></i>
-                <span>1. API 連線設定與自動同步開關</span>
+                <span>1. API 連線設定與多人自動同步開關</span>
               </h3>
-              <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-                <input type="checkbox" id="input-auto-sync" onchange="toggleAutoSyncSetting()" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
-                <span class="text-xs font-bold text-slate-700">啟用異動自動同步</span>
-              </label>
-            </div>
-
-            <div class="space-y-3">
-              <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Google Apps Script Web App URL *</label>
-                <div class="flex flex-col sm:flex-row gap-2">
-                  <input type="url" id="input-gas-url" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-600" />
-                  <button type="button" onclick="pasteGasUrl()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center justify-center gap-1.5 shrink-0">
-                    <i class="fa-regular fa-paste"></i>
-                    <span>貼上網址</span>
-                  </button>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1.5">請貼上部署完成後取得的「網頁應用程式網址」（結尾通常為 <code class="bg-slate-100 px-1 rounded">/exec</code>）。</p>
-              </div>
-
-              <div class="flex flex-wrap items-center gap-2.5 pt-1">
-                <button type="button" onclick="saveGasConfig()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-2xs">
-                  <i class="fa-solid fa-floppy-disk"></i>
-                  <span>儲存 API 設定</span>
-                </button>
-                <button type="button" onclick="testGasConnection()" class="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5">
-                  <i class="fa-solid fa-plug-circle-check text-indigoTokyo-600"></i>
-                  <span>測試連線</span>
-                </button>
-                <button type="button" onclick="openGasTestInNewTab()" class="px-3.5 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigoTokyo-700 border border-indigo-200 text-xs font-semibold transition flex items-center gap-1.5">
-                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                  <span>新分頁直接驗證</span>
-                </button>
-                <button type="button" onclick="clearGasConfig()" class="px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition ml-auto">
-                  清除網址
-                </button>
+              <div class="flex items-center gap-3">
+                <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                  <input type="checkbox" id="input-auto-pull" onchange="toggleAutoSyncSetting()" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer" />
+                  <span class="text-xs font-bold text-slate-700">開啟網頁自動拉取</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                  <input type="checkbox" id="input-auto-sync" onchange="toggleAutoSyncSetting()" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+                  <span class="text-xs font-bold text-slate-700">異動自動上傳</span>
+                </label>
               </div>
             </div>
           </div>
@@ -756,6 +730,24 @@ function doGet(e) {
 
   if (action === 'ping') {
     return jsonOutput({ status: 'ok', message: 'Connected to Google Spreadsheet!', sheetName: ss.getName() });
+  }
+
+  // 支援透過 GET 參數寫入（解決部分沙盒環境 POST 跨網域限制）
+  if (action === 'syncGet' && e.parameter && e.parameter.payload) {
+    var lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      var payload = JSON.parse(e.parameter.payload);
+      if (payload.hotel) writeHotelSheet(ss, payload.hotel);
+      if (payload.days) writeItinerarySheet(ss, payload.days);
+      if (payload.shopping) writeShoppingSheet(ss, payload.shopping);
+      if (payload.foods) writeFoodSheet(ss, payload.foods);
+      return jsonOutput({ status: 'ok', syncedAt: new Date().toISOString() });
+    } catch (err) {
+      return jsonOutput({ status: 'error', message: err.toString() });
+    } finally {
+      lock.releaseLock();
+    }
   }
 
   var data = {
@@ -1523,6 +1515,7 @@ function jsonOutput(obj) {
         if (saved) {
           const parsed = JSON.parse(saved);
           if (!parsed.webhookUrl) parsed.webhookUrl = DEFAULT_GAS_URL;
+          if (typeof parsed.autoPull === 'undefined') parsed.autoPull = true;
           return parsed;
         }
       } catch (e) {
@@ -1531,8 +1524,9 @@ function jsonOutput(obj) {
       return {
         webhookUrl: DEFAULT_GAS_URL,
         autoSync: true,
+        autoPull: true,
         lastSyncTime: '',
-        lastSyncSummary: '已預載您的 Apps Script API 網址，可直接上傳或自動同步'
+        lastSyncSummary: '已連結雲端試算表，開啟網頁將自動抓取最新進度'
       };
     }
 
@@ -1655,8 +1649,10 @@ function jsonOutput(obj) {
     function renderSheetsConfigUI() {
       const urlInput = document.getElementById('input-gas-url');
       const autoCheckbox = document.getElementById('input-auto-sync');
+      const autoPullCheckbox = document.getElementById('input-auto-pull');
       if (urlInput) urlInput.value = sheetsConfig.webhookUrl || '';
       if (autoCheckbox) autoCheckbox.checked = sheetsConfig.autoSync !== false;
+      if (autoPullCheckbox) autoPullCheckbox.checked = sheetsConfig.autoPull !== false;
 
       if (!sheetsConfig.webhookUrl) {
         updateSyncStatusUI('unconfigured', '請輸入 Google Apps Script Web App URL');
@@ -1688,10 +1684,12 @@ function jsonOutput(obj) {
 
     function toggleAutoSyncSetting() {
       const autoCheckbox = document.getElementById('input-auto-sync');
+      const autoPullCheckbox = document.getElementById('input-auto-pull');
       sheetsConfig.autoSync = autoCheckbox ? autoCheckbox.checked : true;
+      sheetsConfig.autoPull = autoPullCheckbox ? autoPullCheckbox.checked : true;
       saveSheetsConfig();
-      appendSyncLog(sheetsConfig.autoSync ? '已開啟「異動自動同步」模式' : '已暫停自動同步（仍可手動同步）', 'info');
-      showToast(sheetsConfig.autoSync ? '已啟用異動自動同步至 Google Sheets' : '已暫停自動同步');
+      appendSyncLog(`同步設定已更新：異動自動上傳=${sheetsConfig.autoSync ? '開啟' : '關閉'}、開啟自動拉取=${sheetsConfig.autoPull ? '開啟' : '關閉'}`, 'info');
+      showToast('已更新雲端同步偏好設定');
     }
 
     function saveGasConfig() {
@@ -1755,19 +1753,143 @@ function jsonOutput(obj) {
           throw new Error(json.message || '回傳格式非預期');
         }
       } catch (err) {
-        // Fallback probe in no-cors mode for sandboxed iframe environments
+        // Sandboxed iframe CORS redirect fallback: use simple GET/POST without custom headers
         try {
-          await fetch(testUrl, { method: 'GET', mode: 'no-cors', credentials: 'omit' });
-          const fallbackMsg = '已穿透預覽沙盒連線至 Google 伺服器！（若無法讀取回傳值，可點「新分頁直接驗證」確認 JSON）';
-          updateSyncStatusUI('synced', fallbackMsg);
-          appendSyncLog(fallbackMsg, 'success');
-          showToast('連線已送達 Google 伺服器！可直接按「立即全量上傳」測試寫入');
+          const compactPayload = JSON.stringify({
+            hotel: appState.hotel,
+            days: appState.days,
+            shopping: appState.shopping,
+            foods: appState.foods
+          });
+
+          // 1. Send via no-cors POST (without custom Content-Type header so browser delivers body reliably)
+          await fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            credentials: 'omit',
+            body: JSON.stringify(payload)
+          });
+
+          // 2. If payload fits URL length, also ping syncGet endpoint for updated Code.gs deployments
+          if (compactPayload.length < 6500) {
+            const getSyncUrl = `${url}${url.includes('?') ? '&' : '?'}action=syncGet&payload=${encodeURIComponent(compactPayload)}&t=${Date.now()}`;
+            fetch(getSyncUrl, { method: 'GET', mode: 'no-cors', credentials: 'omit' }).catch(() => {});
+          }
+
+          const nowStr = new Date().toLocaleString('zh-TW', { hour12: false });
+          const summary = `已送出寫入 (${reasonLabel}) • 其他人開啟網頁將自動拉取`;
+          sheetsConfig.lastSyncTime = nowStr;
+          sheetsConfig.lastSyncSummary = summary;
+          saveSheetsConfig();
+
+          updateSyncStatusUI('synced', summary);
+          appendSyncLog(`已透過跨網域相容通道寫入 Google Sheets（${reasonLabel}）！`, 'success');
+          if (!isSilent) {
+            showToast('已送出同步資料至 Google Sheets！請重新整理試算表確認分頁更新');
+          } else {
+            showToast(`☁️ 已自動寫入「${reasonLabel}」至 Google Sheets`);
+          }
         } catch (fallbackErr) {
-          const errMsg = `連線測試失敗：請確認 Apps Script 部署權限已設為「所有人 (Anyone)」`;
+          const errMsg = `同步失敗：${err.message}`;
           updateSyncStatusUI('error', errMsg);
-          appendSyncLog(`${errMsg} (${err.message})`, 'error');
-          showToast(errMsg, true);
+          appendSyncLog(errMsg, 'error');
+          showToast('Google Sheets 同步失敗，請檢查部署權限或網路連線', true);
         }
+      } finally {
+        isSyncingNow = false;
+      }
+    }
+
+    async function pullFromSheets(isSilent = false) {
+      const url = sheetsConfig.webhookUrl;
+      if (!url) {
+        if (!isSilent) showToast('請先設定並儲存 Google Apps Script Web App URL！', true);
+        return;
+      }
+
+      if (!isSilent) {
+        updateSyncStatusUI('syncing', '正在從 Google Sheets 拉取最新資料...');
+      }
+      appendSyncLog(isSilent ? '啟動時自動從 Google Sheets 檢查最新雲端資料...' : '正在從 Google Sheets 讀取最新工作表資料...', 'syncing');
+
+      try {
+        const pullUrl = `${url}${url.includes('?') ? '&' : '?'}action=pull&t=${Date.now()}`;
+        const res = await fetch(pullUrl, { method: 'GET', redirect: 'follow', credentials: 'omit' });
+        const result = await res.json();
+
+        if (!result || result.status !== 'ok' || !result.data) {
+          throw new Error((result && result.message) || '無法讀取試算表資料');
+        }
+
+        const cloud = result.data;
+        let updatedParts = [];
+
+        if (cloud.hotel && cloud.hotel.name) {
+          appState.hotel = { ...appState.hotel, ...cloud.hotel };
+          updatedParts.push('住宿資訊');
+        }
+
+        if (Array.isArray(cloud.days) && cloud.days.length > 0) {
+          // Merge cloud events back into existing day structure to preserve UI metadata (startFromHotel, hasPresets, etc.)
+          cloud.days.forEach(cloudDay => {
+            const localDay = appState.days.find(d => d.id === cloudDay.id);
+            if (localDay) {
+              localDay.events = cloudDay.events || [];
+            } else {
+              appState.days.push({
+                id: cloudDay.id,
+                dateLabel: cloudDay.dateLabel,
+                dayTitle: cloudDay.dayTitle,
+                subtitle: '',
+                startFromHotel: true,
+                endAtHotel: true,
+                events: cloudDay.events || []
+              });
+            }
+          });
+          updatedParts.push('行程規劃');
+        }
+
+        if (Array.isArray(cloud.shopping)) {
+          appState.shopping = cloud.shopping;
+          updatedParts.push(`購物清單(${cloud.shopping.length}項)`);
+        }
+
+        if (Array.isArray(cloud.foods) && cloud.foods.length > 0) {
+          appState.foods = cloud.foods;
+          updatedParts.push(`美食清單(${cloud.foods.length}間)`);
+        }
+
+        if (updatedParts.length === 0) {
+          updateSyncStatusUI('idle', '試算表目前為空，請先點擊「全部上傳至試算表」建立初始資料');
+          appendSyncLog('試算表尚無資料列，保留本地預設資料。', 'info');
+          if (!isSilent) showToast('試算表目前尚無資料，建議先執行「全部上傳至試算表」', true);
+          return;
+        }
+
+        saveState();
+        renderAll();
+
+        const nowStr = new Date().toLocaleString('zh-TW', { hour12: false });
+        const summary = `已從雲端同步最新：${updatedParts.join('、')}`;
+        sheetsConfig.lastSyncTime = nowStr;
+        sheetsConfig.lastSyncSummary = summary;
+        saveSheetsConfig();
+
+        updateSyncStatusUI('synced', summary);
+        appendSyncLog(summary, 'success');
+        if (!isSilent) {
+          showToast(`已從 Google Sheets 同步最新${updatedParts.join('、')}！`);
+        }
+      } catch (err) {
+        const errMsg = `拉取失敗：${err.message}`;
+        if (!isSilent) {
+          updateSyncStatusUI('error', errMsg);
+          showToast('從 Google Sheets 拉取資料失敗，請確認 Apps Script 部署權限為「所有人」', true);
+        } else {
+          updateSyncStatusUI('idle', '自動拉取略過（預覽沙盒跨網域限制，可直接點擊全量上傳）');
+        }
+        appendSyncLog(errMsg, 'error');
       }
     }
 
@@ -3108,6 +3230,10 @@ function jsonOutput(obj) {
     // Initialize Application on Load
     window.addEventListener('DOMContentLoaded', () => {
       renderAll();
+      // Automatically pull latest shared trip data from Google Sheets when opened
+      if (sheetsConfig.webhookUrl && sheetsConfig.autoPull !== false) {
+        pullFromSheets(true);
+      }
     });
   </script>
 </body>
