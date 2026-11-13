@@ -73,6 +73,30 @@
     .timeline-item:last-child .timeline-line::before {
       display: none;
     }
+    /* Drag and drop styles */
+    .draggable-event {
+      cursor: grab;
+      transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+    }
+    .draggable-event:active {
+      cursor: grabbing;
+    }
+    .draggable-event.dragging {
+      opacity: 0.45;
+      transform: scale(0.985);
+    }
+    .drop-target-top {
+      box-shadow: 0 -3px 0 0 #3949ab !important;
+    }
+    .drop-target-bottom {
+      box-shadow: 0 3px 0 0 #3949ab !important;
+    }
+    .day-drop-zone-active {
+      background-color: rgba(238, 242, 255, 0.7) !important;
+      outline: 2px dashed #3949ab;
+      outline-offset: -4px;
+      border-radius: 1rem;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -950,6 +974,8 @@ function jsonOutput(obj) {
         </div>
       </form>
     </div>
+  </div>
+
   <!-- ==================== MODAL: ADD / EDIT ITINERARY EVENT ==================== -->
   <div id="event-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl border border-slate-100 space-y-4">
@@ -1482,9 +1508,10 @@ function jsonOutput(obj) {
     let selectedTrendingFilter = 'all';
     let selectedFoodArea = 'all';
     let selectedFoodStatus = 'all';
+    let draggedEventInfo = null; // { dayId, eventId }
 
     // ==================== GOOGLE SHEETS SYNC STATE & ENGINE ====================
-    const SHEETS_CONFIG_KEY = 'tokyo_trip_2026_sheets_cfg_v1';
+    const SHEETS_CONFIG_KEY = 'tokyo_trip_sheets_sync_config_v1';
     const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbyyBlMKO3H57adVnlKumfMB20nH3FpDb7LH7eanH8I0mACWTeUzdFizUNUfSP0uXjXe/exec';
     let sheetsConfig = loadSheetsConfig();
     let autoSyncTimer = null;
@@ -1495,9 +1522,7 @@ function jsonOutput(obj) {
         const saved = localStorage.getItem(SHEETS_CONFIG_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (!parsed.webhookUrl) {
-            parsed.webhookUrl = DEFAULT_GAS_URL;
-          }
+          if (!parsed.webhookUrl) parsed.webhookUrl = DEFAULT_GAS_URL;
           return parsed;
         }
       } catch (e) {
@@ -2172,7 +2197,7 @@ function jsonOutput(obj) {
           </div>
         ` : '';
 
-        const eventsHtml = day.events.map(ev => {
+        const eventsHtml = day.events.map((ev, evIdx) => {
           const transitHtml = ev.transit ? `
             <div class="mt-2.5 p-2.5 rounded-xl bg-sky-50/80 border border-sky-200/70 text-xs text-sky-950 space-y-1">
               <div class="font-bold text-sky-800 flex items-center gap-1.5">
@@ -2188,7 +2213,15 @@ function jsonOutput(obj) {
           ` : '';
 
           return `
-            <div class="relative pl-10 pb-5 timeline-item timeline-line">
+            <div class="relative pl-10 pb-5 timeline-item timeline-line draggable-event"
+                 draggable="true"
+                 data-day-id="${escapeHtml(day.id)}"
+                 data-event-id="${escapeHtml(ev.id)}"
+                 ondragstart="handleEventDragStart(event, '${escapeHtml(day.id)}', '${escapeHtml(ev.id)}')"
+                 ondragover="handleEventDragOver(event)"
+                 ondragleave="handleEventDragLeave(event)"
+                 ondrop="handleEventDrop(event, '${escapeHtml(day.id)}', '${escapeHtml(ev.id)}')"
+                 ondragend="handleEventDragEnd(event)">
               <button onclick="toggleEventDone('${day.id}', '${ev.id}')" title="點擊切換完成狀態" class="absolute left-1.5 top-1.5 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs transition z-10 ${
                 ev.done
                   ? 'bg-emerald-500 border-emerald-500 text-white'
@@ -2197,7 +2230,7 @@ function jsonOutput(obj) {
                 <i class="fa-solid fa-check"></i>
               </button>
 
-              <div class="p-3.5 sm:p-4 rounded-xl border transition ${
+              <div class="event-card-box p-3.5 sm:p-4 rounded-xl border transition ${
                 ev.done
                   ? 'bg-slate-50/80 border-slate-200 opacity-75'
                   : 'bg-white border-slate-200 hover:border-indigo-200 shadow-2xs'
@@ -2205,19 +2238,29 @@ function jsonOutput(obj) {
                 <div class="flex flex-wrap items-start justify-between gap-2">
                   <div class="space-y-1">
                     <div class="flex flex-wrap items-center gap-2">
+                      <span title="按住可拖曳調整順序或跨天移動" class="text-slate-400 hover:text-indigoTokyo-600 cursor-grab px-1">
+                        <i class="fa-solid fa-grip-vertical"></i>
+                      </span>
                       <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-800">${escapeHtml(ev.time)}</span>
                       <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md border ${getTagBadgeClass(ev.tag)}">${escapeHtml(ev.tag)}</span>
                     </div>
                     <h4 class="font-bold text-slate-900 text-sm sm:text-base ${ev.done ? 'line-through text-slate-500' : ''}">${escapeHtml(ev.title)}</h4>
                   </div>
                   <div class="flex items-center gap-1 shrink-0">
-                    <button onclick="openEditEventModal('${day.id}', '${ev.id}')" title="編輯此行程" class="w-7 h-7 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 flex items-center justify-center text-xs transition">
-                      <i class="fa-solid fa-pen-to-square"></i>
+                    <button type="button" onclick="moveEventOrder('${escapeHtml(day.id)}', ${evIdx}, -1)" ${evIdx === 0 ? 'disabled' : ''} title="往上移動" class="w-7 h-7 rounded-lg text-slate-400 hover:text-indigoTokyo-700 hover:bg-indigo-50 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-xs transition">
+                      <i class="fa-solid fa-arrow-up"></i>
                     </button>
-                    <button onclick="openAddEventModal('${day.id}')" title="在此日新增活動" class="w-7 h-7 rounded-lg text-slate-400 hover:text-indigoTokyo-700 hover:bg-indigo-50 flex items-center justify-center text-xs transition">
+                    <button type="button" onclick="moveEventOrder('${escapeHtml(day.id)}', ${evIdx}, 1)" ${evIdx === day.events.length - 1 ? 'disabled' : ''} title="往下移動" class="w-7 h-7 rounded-lg text-slate-400 hover:text-indigoTokyo-700 hover:bg-indigo-50 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-xs transition">
+                      <i class="fa-solid fa-arrow-down"></i>
+                    </button>
+                    <button type="button" onclick="openEditEventModal('${escapeHtml(day.id)}', '${escapeHtml(ev.id)}')" title="編輯此行程" class="px-2 py-1 rounded-lg text-slate-500 hover:text-amber-700 hover:bg-amber-50 flex items-center gap-1 text-xs font-medium transition">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                      <span class="hidden sm:inline">編輯</span>
+                    </button>
+                    <button type="button" onclick="openAddEventModal('${escapeHtml(day.id)}')" title="在此日新增活動" class="w-7 h-7 rounded-lg text-slate-400 hover:text-indigoTokyo-700 hover:bg-indigo-50 flex items-center justify-center text-xs transition">
                       <i class="fa-solid fa-plus"></i>
                     </button>
-                    <button onclick="deleteEvent('${day.id}', '${ev.id}')" title="刪除此項目" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center text-xs transition">
+                    <button type="button" onclick="deleteEvent('${escapeHtml(day.id)}', '${escapeHtml(ev.id)}')" title="刪除此項目" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center text-xs transition">
                       <i class="fa-regular fa-trash-can"></i>
                     </button>
                   </div>
@@ -2228,6 +2271,12 @@ function jsonOutput(obj) {
             </div>
           `;
         }).join('');
+
+        const emptyDropHint = day.events.length === 0 ? `
+          <div class="my-2 p-4 rounded-xl border-2 border-dashed border-slate-200 text-center text-xs text-slate-400">
+            此日尚無活動，可將其他天的行程拖曳至此處，或點擊右上角新增
+          </div>
+        ` : '';
 
         const endNodeHtml = day.endAtHotel ? `
           <div class="relative pl-10 timeline-item">
@@ -2251,20 +2300,169 @@ function jsonOutput(obj) {
                 </div>
                 ${day.subtitle ? `<p class="text-xs text-indigo-200 mt-1">${escapeHtml(day.subtitle)}</p>` : ''}
               </div>
-              <button onclick="openAddEventModal('${day.id}')" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition self-start sm:self-center flex items-center gap-1.5 border border-white/15">
-                <i class="fa-solid fa-plus"></i>
-                <span>新增當日活動</span>
-              </button>
+              <div class="flex items-center gap-2 self-start sm:self-center">
+                <span class="hidden lg:inline-flex items-center gap-1 text-[11px] text-indigo-200 bg-white/10 px-2.5 py-1 rounded-lg">
+                  <i class="fa-solid fa-grip-vertical"></i> 可拖曳調整順序或跨天移動
+                </span>
+                <button onclick="openAddEventModal('${day.id}')" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition flex items-center gap-1.5 border border-white/15">
+                  <i class="fa-solid fa-plus"></i>
+                  <span>新增當日活動</span>
+                </button>
+              </div>
             </div>
             ${presetBanner}
-            <div class="p-5">
+            <div class="p-5 transition-colors"
+                 ondragover="handleDayContainerDragOver(event)"
+                 ondragleave="handleDayContainerDragLeave(event)"
+                 ondrop="handleDayContainerDrop(event, '${escapeHtml(day.id)}')">
               ${startNodeHtml}
               ${eventsHtml}
+              ${emptyDropHint}
               ${endNodeHtml}
             </div>
           </div>
         `;
       }).join('');
+    }
+
+    // ==================== DRAG & DROP / REORDER HANDLERS ====================
+    function moveEventOrder(dayId, index, direction) {
+      const day = appState.days.find(d => d.id === dayId);
+      if (!day) return;
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= day.events.length) return;
+
+      const [movedItem] = day.events.splice(index, 1);
+      day.events.splice(targetIndex, 0, movedItem);
+
+      saveState();
+      renderItinerary();
+      triggerAutoSync(`調整行程順序：${movedItem.title}`);
+    }
+
+    function handleEventDragStart(e, dayId, eventId) {
+      draggedEventInfo = { dayId, eventId };
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', JSON.stringify(draggedEventInfo));
+      const el = e.currentTarget;
+      setTimeout(() => el.classList.add('dragging'), 0);
+    }
+
+    function handleEventDragOver(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.dataTransfer.dropEffect = 'move';
+      const targetEl = e.currentTarget;
+      const cardBox = targetEl.querySelector('.event-card-box');
+      if (!cardBox) return;
+
+      const rect = targetEl.getBoundingClientRect();
+      const midY = rect.top + rect.height / 2;
+      cardBox.classList.remove('drop-target-top', 'drop-target-bottom');
+      if (e.clientY < midY) {
+        cardBox.classList.add('drop-target-top');
+      } else {
+        cardBox.classList.add('drop-target-bottom');
+      }
+    }
+
+    function handleEventDragLeave(e) {
+      const cardBox = e.currentTarget.querySelector('.event-card-box');
+      if (cardBox) {
+        cardBox.classList.remove('drop-target-top', 'drop-target-bottom');
+      }
+    }
+
+    function handleEventDrop(e, targetDayId, targetEventId) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const cardBox = e.currentTarget.querySelector('.event-card-box');
+      const insertAfter = cardBox ? cardBox.classList.contains('drop-target-bottom') : false;
+      if (cardBox) {
+        cardBox.classList.remove('drop-target-top', 'drop-target-bottom');
+      }
+
+      if (!draggedEventInfo) return;
+      const { dayId: sourceDayId, eventId: sourceEventId } = draggedEventInfo;
+      if (sourceDayId === targetDayId && sourceEventId === targetEventId) return;
+
+      const sourceDay = appState.days.find(d => d.id === sourceDayId);
+      const targetDay = appState.days.find(d => d.id === targetDayId);
+      if (!sourceDay || !targetDay) return;
+
+      const sourceIdx = sourceDay.events.findIndex(ev => ev.id === sourceEventId);
+      if (sourceIdx === -1) return;
+
+      const [movedEvent] = sourceDay.events.splice(sourceIdx, 1);
+
+      let targetIdx = targetDay.events.findIndex(ev => ev.id === targetEventId);
+      if (targetIdx === -1) {
+        targetDay.events.push(movedEvent);
+      } else {
+        if (insertAfter) targetIdx += 1;
+        targetDay.events.splice(targetIdx, 0, movedEvent);
+      }
+
+      draggedEventInfo = null;
+      saveState();
+      renderItinerary();
+
+      const actionLabel = sourceDayId === targetDayId
+        ? `調整行程順序：${movedEvent.title}`
+        : `移動行程至 ${targetDay.dateLabel}：${movedEvent.title}`;
+      triggerAutoSync(actionLabel);
+      showToast(sourceDayId === targetDayId ? '已更新行程順序！' : `已將行程移動至 ${targetDay.dateLabel}！`);
+    }
+
+    function handleEventDragEnd(e) {
+      e.currentTarget.classList.remove('dragging');
+      document.querySelectorAll('.drop-target-top, .drop-target-bottom').forEach(el => {
+        el.classList.remove('drop-target-top', 'drop-target-bottom');
+      });
+      document.querySelectorAll('.day-drop-zone-active').forEach(el => {
+        el.classList.remove('day-drop-zone-active');
+      });
+      draggedEventInfo = null;
+    }
+
+    function handleDayContainerDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      e.currentTarget.classList.add('day-drop-zone-active');
+    }
+
+    function handleDayContainerDragLeave(e) {
+      if (!e.currentTarget.contains(e.relatedTarget)) {
+        e.currentTarget.classList.remove('day-drop-zone-active');
+      }
+    }
+
+    function handleDayContainerDrop(e, targetDayId) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('day-drop-zone-active');
+      if (!draggedEventInfo) return;
+
+      const { dayId: sourceDayId, eventId: sourceEventId } = draggedEventInfo;
+      const sourceDay = appState.days.find(d => d.id === sourceDayId);
+      const targetDay = appState.days.find(d => d.id === targetDayId);
+      if (!sourceDay || !targetDay) return;
+
+      const sourceIdx = sourceDay.events.findIndex(ev => ev.id === sourceEventId);
+      if (sourceIdx === -1) return;
+
+      const [movedEvent] = sourceDay.events.splice(sourceIdx, 1);
+      targetDay.events.push(movedEvent);
+
+      draggedEventInfo = null;
+      saveState();
+      renderItinerary();
+
+      const actionLabel = sourceDayId === targetDayId
+        ? `調整行程順序：${movedEvent.title}`
+        : `移動行程至 ${targetDay.dateLabel}：${movedEvent.title}`;
+      triggerAutoSync(actionLabel);
+      showToast(sourceDayId === targetDayId ? '已移至當日最後一項！' : `已將行程移動至 ${targetDay.dateLabel}！`);
     }
 
     function toggleEventDone(dayId, eventId) {
