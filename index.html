@@ -188,12 +188,26 @@
             <i class="fa-solid fa-train-subway text-emerald-600"></i>
             <span>住宿與全景點交通總覽</span>
           </button>
+          <button onclick="switchTab('sheetsync')" id="tab-sheetsync" class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:bg-slate-100">
+            <i class="fa-solid fa-table text-emerald-600"></i>
+            <span>Google Sheets 同步</span>
+            <span id="nav-sync-badge" class="inline-flex items-center gap-1 bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5 rounded-full">
+              <span id="nav-sync-dot" class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+              <span id="nav-sync-text">未設定</span>
+            </span>
+          </button>
         </div>
 
-        <button onclick="confirmResetData()" title="重置為最新預設行程" class="px-2.5 py-2 rounded-xl text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition whitespace-nowrap flex items-center gap-1">
-          <i class="fa-solid fa-rotate-left"></i>
-          <span class="hidden md:inline">重置為最新預設行程</span>
-        </button>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="switchTab('sheetsync')" id="header-sync-pill" title="查看 Google Spreadsheet 同步狀態" class="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs text-slate-600 transition">
+            <span id="header-sync-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+            <span id="header-sync-label">Sheets 未連線</span>
+          </button>
+          <button onclick="confirmResetData()" title="重置為最新預設行程" class="px-2.5 py-2 rounded-xl text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition whitespace-nowrap flex items-center gap-1">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span class="hidden md:inline">重置為最新預設行程</span>
+          </button>
+        </div>
       </div>
     </div>
   </nav>
@@ -543,6 +557,352 @@
                 • <strong>麻布台之丘：</strong>京王新線直通都營新宿線至「新宿三丁目」轉副都心線/日比谷線至「神谷町駅」5號出口直通（約 32 分，IC 約 ¥380）。<br/>
                 • <strong>下北澤 Reload：</strong>距離住宿僅約 1.5 km，天氣好推薦直接步行 18–20 分鐘散步前往，或從笹塚轉京王井之頭線（約 15 分）。
               </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: GOOGLE SPREADSHEET 資料庫同步 ==================== -->
+    <section id="view-sheetsync" class="tab-view hidden space-y-6">
+      <!-- Top Status Banner -->
+      <div class="bg-gradient-to-r from-emerald-50 via-white to-indigo-50 border border-emerald-200/80 rounded-2xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Google Spreadsheet Webhook API</span>
+            </span>
+            <span id="sync-panel-status-pill" class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+              <span id="sync-panel-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span id="sync-panel-status-text">尚未設定 Web App URL</span>
+            </span>
+          </div>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900">雲端試算表資料庫即時同步中心</h2>
+          <p class="text-xs sm:text-sm text-slate-600">連結 Google Apps Script API 後，只要在網頁上新增/編輯行程、勾選購物清單或更新美食造訪狀態，系統將於 0.8 秒後自動同步寫入試算表，方便好友共同檢視！</p>
+        </div>
+
+        <div class="bg-white/90 border border-slate-200 rounded-xl px-4 py-3 text-xs space-y-1 shrink-0">
+          <div class="text-slate-400 font-medium">最近同步紀錄</div>
+          <div id="sync-last-time" class="font-bold text-slate-800">尚未執行過同步</div>
+          <div id="sync-last-detail" class="text-[11px] text-emerald-700">等待設定 API 網址</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left 7 Cols: API Configuration & Manual Sync Controls -->
+        <div class="lg:col-span-7 space-y-5">
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-link text-emerald-600"></i>
+                <span>1. API 連線設定與自動同步開關</span>
+              </h3>
+              <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                <input type="checkbox" id="input-auto-sync" onchange="toggleAutoSyncSetting()" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+                <span class="text-xs font-bold text-slate-700">啟用異動自動同步</span>
+              </label>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Google Apps Script Web App URL *</label>
+                <div class="flex flex-col sm:flex-row gap-2">
+                  <input type="url" id="input-gas-url" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-600" />
+                  <button type="button" onclick="pasteGasUrl()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center justify-center gap-1.5 shrink-0">
+                    <i class="fa-regular fa-paste"></i>
+                    <span>貼上網址</span>
+                  </button>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1.5">請貼上部署完成後取得的「網頁應用程式網址」（結尾通常為 <code class="bg-slate-100 px-1 rounded">/exec</code>）。</p>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2.5 pt-1">
+                <button type="button" onclick="saveGasConfig()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-2xs">
+                  <i class="fa-solid fa-floppy-disk"></i>
+                  <span>儲存 API 設定</span>
+                </button>
+                <button type="button" onclick="testGasConnection()" class="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-plug-circle-check text-indigoTokyo-600"></i>
+                  <span>測試連線</span>
+                </button>
+                <button type="button" onclick="clearGasConfig()" class="px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition ml-auto">
+                  清除網址
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Manual Bidirectional Sync Actions -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-4">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-arrows-rotate text-indigoTokyo-600"></i>
+              <span>2. 手動雙向同步操作</span>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div class="p-4 rounded-xl bg-indigo-50/60 border border-indigo-100 flex flex-col justify-between gap-3">
+                <div>
+                  <div class="font-bold text-indigoTokyo-900 text-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-cloud-arrow-up text-indigoTokyo-600"></i>
+                    <span>全部上傳至試算表 (Push)</span>
+                  </div>
+                  <p class="text-xs text-slate-600 mt-1 leading-relaxed">將目前網頁上的<strong>住宿資訊、每日行程規劃、必買購物清單與美食清單</strong>完整覆蓋同步至 Google Spreadsheet 對應工作表。</p>
+                </div>
+                <button type="button" onclick="pushAllToSheets('手動全量上傳')" class="w-full py-2.5 px-4 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow-2xs">
+                  <i class="fa-solid fa-upload"></i>
+                  <span>立即全量上傳至 Google Sheets</span>
+                </button>
+              </div>
+
+              <div class="p-4 rounded-xl bg-emerald-50/60 border border-emerald-100 flex flex-col justify-between gap-3">
+                <div>
+                  <div class="font-bold text-emerald-900 text-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-cloud-arrow-down text-emerald-600"></i>
+                    <span>從試算表拉取最新資料 (Pull)</span>
+                  </div>
+                  <p class="text-xs text-slate-600 mt-1 leading-relaxed">若好友在 Google 試算表或另一台手機更新了行程與購物清單，點擊此按鈕即可將雲端最新資料拉回本網頁。</p>
+                </div>
+                <button type="button" onclick="pullFromSheets()" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow-2xs">
+                  <i class="fa-solid fa-download"></i>
+                  <span>從 Google Sheets 拉取覆蓋</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Live Sync Activity Log -->
+            <div class="pt-2">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-700">即時同步狀態日誌 (Sync Log)</span>
+                <span class="text-[11px] text-slate-400">自動防抖動延遲：800ms</span>
+              </div>
+              <div id="sync-log-list" class="bg-slate-900 text-slate-200 rounded-xl p-3 font-mono text-[11px] space-y-1.5 max-h-40 overflow-y-auto">
+                <div class="text-slate-400">[系統就緒] 請先於上方輸入 Google Apps Script Web App URL 並儲存。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: 3-Step Guide & One-Click Copy Code.gs -->
+        <div class="lg:col-span-5 bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-4 flex flex-col justify-between">
+          <div class="space-y-3.5">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-code text-amber-500"></i>
+                <span>3. Google Apps Script 部署教學</span>
+              </h3>
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200">免伺服器免費方案</span>
+            </div>
+
+            <ol class="space-y-2.5 text-xs text-slate-600 leading-relaxed">
+              <li class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <strong class="text-slate-900">步驟一：建立 Google 試算表</strong><br/>
+                前往 <a href="https://sheets.new" target="_blank" rel="noopener noreferrer" class="text-indigoTokyo-700 font-semibold underline">sheets.new</a> 建立一份新的空白試算表（例如命名為「2026東京好友之旅資料庫」）。
+              </li>
+              <li class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <strong class="text-slate-900">步驟二：貼上後方 <code class="text-indigoTokyo-700">Code.gs</code> 腳本</strong><br/>
+                在試算表上方選單點選<strong>「擴充功能」→「Apps Script」</strong>，刪除預設程式碼後貼上下方完整腳本並按 <kbd class="px-1.5 py-0.5 bg-white border rounded text-[10px]">Ctrl+S</kbd> 儲存。
+              </li>
+              <li class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                <strong class="text-slate-900">步驟三：部署為網頁應用程式</strong><br/>
+                點擊右上角<strong>「部署」→「新增部署作業」</strong>，類型選「網頁應用程式」，執行身分選「我」，<strong>誰可以存取務必選「所有人 (Anyone)」</strong>，完成授權後複製產生的 <code class="text-emerald-700 font-semibold">Web App URL</code> 貼回左側即可！
+              </li>
+            </ol>
+
+            <div class="space-y-2 pt-1">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800">Apps Script 完整後端程式碼 (<code class="text-indigoTokyo-700">Code.gs</code>)</span>
+                <button type="button" onclick="copyGasScript()" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition flex items-center gap-1.5">
+                  <i class="fa-regular fa-copy"></i>
+                  <span>一鍵複製程式碼</span>
+                </button>
+              </div>
+              <pre id="gas-script-template" class="bg-slate-900 text-emerald-300 rounded-xl p-3 text-[11px] font-mono overflow-x-auto max-h-60 leading-relaxed select-all">// ==========================================
+// 東京六天五夜好友之旅 - Google Sheets 同步 API
+// 自動維護：行程規劃 (Itinerary)、購物清單 (ShoppingList)、美食清單 (FoodList)
+// ==========================================
+
+function doGet(e) {
+  var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : 'pull';
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  if (action === 'ping') {
+    return jsonOutput({ status: 'ok', message: 'Connected to Google Spreadsheet!', sheetName: ss.getName() });
+  }
+
+  var data = {
+    hotel: readHotelSheet(ss),
+    days: readItinerarySheet(ss),
+    shopping: readShoppingSheet(ss),
+    foods: readFoodSheet(ss),
+    pulledAt: new Date().toISOString()
+  };
+  return jsonOutput({ status: 'ok', data: data });
+}
+
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var raw = e.postData ? e.postData.contents : '{}';
+    var payload = JSON.parse(raw);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    if (payload.action === 'ping') {
+      return jsonOutput({ status: 'ok', message: 'POST connection verified', sheetName: ss.getName() });
+    }
+
+    if (payload.hotel) writeHotelSheet(ss, payload.hotel);
+    if (payload.days) writeItinerarySheet(ss, payload.days);
+    if (payload.shopping) writeShoppingSheet(ss, payload.shopping);
+    if (payload.foods) writeFoodSheet(ss, payload.foods);
+
+    return jsonOutput({
+      status: 'ok',
+      syncedAt: new Date().toISOString(),
+      counts: {
+        days: payload.days ? payload.days.length : 0,
+        shopping: payload.shopping ? payload.shopping.length : 0,
+        foods: payload.foods ? payload.foods.length : 0
+      }
+    });
+  } catch (err) {
+    return jsonOutput({ status: 'error', message: err.toString() });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function getOrCreateSheet(ss, name, headers) {
+  var sheet = ss.getSheetByName(name);
+  if (!sheet) {
+    sheet = ss.insertSheet(name);
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#e0e7ff');
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+function writeHotelSheet(ss, hotel) {
+  var sheet = getOrCreateSheet(ss, '住宿資訊', ['住宿名稱', '日文地址', '最近車站', '住宿備註', '最後更新時間']);
+  sheet.clearContents();
+  sheet.appendRow(['住宿名稱', '日文地址', '最近車站', '住宿備註', '最後更新時間']);
+  sheet.appendRow([hotel.name || '', hotel.address || '', hotel.station || '', hotel.note || '', new Date().toLocaleString('zh-TW')]);
+}
+
+function readHotelSheet(ss) {
+  var sheet = ss.getSheetByName('住宿資訊');
+  if (!sheet || sheet.getLastRow() < 2) return null;
+  var row = sheet.getRange(2, 1, 1, 4).getValues()[0];
+  return { name: row[0], address: row[1], station: row[2], note: row[3] };
+}
+
+function writeItinerarySheet(ss, days) {
+  var headers = ['DayID', '日期', '當日主題', 'EventID', '時間', '行程名稱', '標籤', '交通方式', '備註', '已完成'];
+  var sheet = getOrCreateSheet(ss, '行程規劃', headers);
+  sheet.clearContents();
+  sheet.appendRow(headers);
+  var rows = [];
+  days.forEach(function(d) {
+    (d.events || []).forEach(function(ev) {
+      rows.push([d.id, d.dateLabel, d.dayTitle, ev.id, ev.time, ev.title, ev.tag, ev.transit || '', ev.note || '', ev.done ? 'TRUE' : 'FALSE']);
+    });
+  });
+  if (rows.length > 0) {
+    sheet.getRange(2, 1, rows.length, headers.length).setValues(rows);
+  }
+}
+
+function readItinerarySheet(ss) {
+  var sheet = ss.getSheetByName('行程規劃');
+  if (!sheet || sheet.getLastRow() < 2) return null;
+  var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, 10).getValues();
+  var dayMap = {};
+  values.forEach(function(r) {
+    var dayId = String(r[0]);
+    if (!dayMap[dayId]) {
+      dayMap[dayId] = { id: dayId, dateLabel: String(r[1]), dayTitle: String(r[2]), events: [] };
+    }
+    dayMap[dayId].events.push({
+      id: String(r[3]),
+      time: String(r[4]),
+      title: String(r[5]),
+      tag: String(r[6]),
+      transit: String(r[7]),
+      note: String(r[8]),
+      done: String(r[9]).toUpperCase() === 'TRUE'
+    });
+  });
+  return Object.keys(dayMap).map(function(k) { return dayMap[k]; });
+}
+
+function writeShoppingSheet(ss, shopping) {
+  var headers = ['ItemID', '商品名稱', '分類', '預計購買地點', '日幣價格', '已購買'];
+  var sheet = getOrCreateSheet(ss, '購物清單', headers);
+  sheet.clearContents();
+  sheet.appendRow(headers);
+  var rows = shopping.map(function(s) {
+    return [s.id, s.name, s.category, s.store || '', Number(s.price) || 0, s.bought ? 'TRUE' : 'FALSE'];
+  });
+  if (rows.length > 0) {
+    sheet.getRange(2, 1, rows.length, headers.length).setValues(rows);
+  }
+}
+
+function readShoppingSheet(ss) {
+  var sheet = ss.getSheetByName('購物清單');
+  if (!sheet || sheet.getLastRow() < 2) return null;
+  var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
+  return values.map(function(r) {
+    return {
+      id: String(r[0]),
+      name: String(r[1]),
+      category: String(r[2]),
+      store: String(r[3]),
+      price: Number(r[4]) || 0,
+      bought: String(r[5]).toUpperCase() === 'TRUE'
+    };
+  });
+}
+
+function writeFoodSheet(ss, foods) {
+  var headers = ['FoodID', '餐廳名稱', '日文副標', '區域', '地址', '招牌必點', '預計價位', '預約建議', '建議時段', '交通方式', '已造訪'];
+  var sheet = getOrCreateSheet(ss, '美食清單', headers);
+  sheet.clearContents();
+  sheet.appendRow(headers);
+  var rows = foods.map(function(f) {
+    return [f.id, f.name, f.jpName || '', f.area, f.address || '', f.signature, f.priceRange || '', f.reservation || '', f.suggestedTime || '', f.transit || '', f.visited ? 'TRUE' : 'FALSE'];
+  });
+  if (rows.length > 0) {
+    sheet.getRange(2, 1, rows.length, headers.length).setValues(rows);
+  }
+}
+
+function readFoodSheet(ss) {
+  var sheet = ss.getSheetByName('美食清單');
+  if (!sheet || sheet.getLastRow() < 2) return null;
+  var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, 11).getValues();
+  return values.map(function(r) {
+    return {
+      id: String(r[0]),
+      name: String(r[1]),
+      jpName: String(r[2]),
+      area: String(r[3]),
+      address: String(r[4]),
+      signature: String(r[5]),
+      priceRange: String(r[6]),
+      reservation: String(r[7]),
+      suggestedTime: String(r[8]),
+      transit: String(r[9]),
+      visited: String(r[10]).toUpperCase() === 'TRUE'
+    };
+  });
+}
+
+function jsonOutput(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}</pre>
             </div>
           </div>
         </div>
@@ -1119,18 +1479,432 @@
     let selectedFoodArea = 'all';
     let selectedFoodStatus = 'all';
 
+    // ==================== GOOGLE SHEETS SYNC STATE & ENGINE ====================
+    const SHEETS_CONFIG_KEY = 'tokyo_trip_2026_sheets_cfg_v1';
+    let sheetsConfig = loadSheetsConfig();
+    let autoSyncTimer = null;
+    let isSyncingNow = false;
+
+    function loadSheetsConfig() {
+      try {
+        const saved = localStorage.getItem(SHEETS_CONFIG_KEY);
+        if (saved) {
+          return JSON.parse(saved);
+        }
+      } catch (e) {
+        console.error('Failed to load sheets config', e);
+      }
+      return {
+        webhookUrl: '',
+        autoSync: true,
+        lastSyncTime: '',
+        lastSyncSummary: '等待設定 API 網址'
+      };
+    }
+
+    function saveSheetsConfig() {
+      try {
+        localStorage.setItem(SHEETS_CONFIG_KEY, JSON.stringify(sheetsConfig));
+      } catch (e) {
+        console.error('Failed to save sheets config', e);
+      }
+    }
+
+    function appendSyncLog(message, type = 'info') {
+      const logList = document.getElementById('sync-log-list');
+      if (!logList) return;
+      const now = new Date();
+      const timeStr = now.toTimeString().split(' ')[0];
+      const colorClass = type === 'success'
+        ? 'text-emerald-400'
+        : type === 'error'
+          ? 'text-rose-400'
+          : type === 'syncing'
+            ? 'text-amber-300'
+            : 'text-slate-300';
+
+      const line = document.createElement('div');
+      line.className = colorClass;
+      line.textContent = `[${timeStr}] ${message}`;
+      logList.prepend(line);
+
+      // Keep latest 30 entries
+      while (logList.children.length > 30) {
+        logList.removeChild(logList.lastChild);
+      }
+    }
+
+    function updateSyncStatusUI(state, detailText = '') {
+      // state: 'unconfigured' | 'idle' | 'syncing' | 'synced' | 'error'
+      const navBadge = document.getElementById('nav-sync-badge');
+      const navDot = document.getElementById('nav-sync-dot');
+      const navText = document.getElementById('nav-sync-text');
+
+      const headerDot = document.getElementById('header-sync-dot');
+      const headerLabel = document.getElementById('header-sync-label');
+
+      const panelPill = document.getElementById('sync-panel-status-pill');
+      const panelDot = document.getElementById('sync-panel-dot');
+      const panelText = document.getElementById('sync-panel-status-text');
+
+      const lastTimeEl = document.getElementById('sync-last-time');
+      const lastDetailEl = document.getElementById('sync-last-detail');
+
+      if (lastTimeEl) {
+        lastTimeEl.textContent = sheetsConfig.lastSyncTime || '尚未執行過同步';
+      }
+      if (lastDetailEl) {
+        lastDetailEl.textContent = detailText || sheetsConfig.lastSyncSummary || '';
+      }
+
+      if (!navDot || !navText) return;
+
+      if (state === 'unconfigured') {
+        navBadge.className = 'inline-flex items-center gap-1 bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5 rounded-full';
+        navDot.className = 'w-1.5 h-1.5 rounded-full bg-slate-400';
+        navText.textContent = '未設定';
+        if (headerDot) headerDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+        if (headerLabel) headerLabel.textContent = 'Sheets 未連線';
+        if (panelPill) panelPill.className = 'inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200';
+        if (panelDot) panelDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+        if (panelText) panelText.textContent = '尚未設定 Web App URL';
+      } else if (state === 'syncing') {
+        navBadge.className = 'inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-[11px] px-2 py-0.5 rounded-full';
+        navDot.className = 'w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping';
+        navText.textContent = '同步中...';
+        if (headerDot) headerDot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
+        if (headerLabel) headerLabel.textContent = 'Sheets 同步中...';
+        if (panelPill) panelPill.className = 'inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200';
+        if (panelDot) panelDot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-ping';
+        if (panelText) panelText.textContent = '正在與 Google Sheets 同步...';
+      } else if (state === 'synced') {
+        navBadge.className = 'inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[11px] px-2 py-0.5 rounded-full';
+        navDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
+        navText.textContent = '已同步';
+        if (headerDot) headerDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        if (headerLabel) headerLabel.textContent = sheetsConfig.lastSyncTime ? `已同步 ${sheetsConfig.lastSyncTime.split(' ')[1] || ''}` : 'Sheets 已連線';
+        if (panelPill) panelPill.className = 'inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200';
+        if (panelDot) panelDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        if (panelText) panelText.textContent = '已連線並與試算表同步';
+      } else if (state === 'error') {
+        navBadge.className = 'inline-flex items-center gap-1 bg-rose-100 text-rose-800 text-[11px] px-2 py-0.5 rounded-full';
+        navDot.className = 'w-1.5 h-1.5 rounded-full bg-rose-500';
+        navText.textContent = '同步異常';
+        if (headerDot) headerDot.className = 'w-2 h-2 rounded-full bg-rose-500';
+        if (headerLabel) headerLabel.textContent = 'Sheets 同步異常';
+        if (panelPill) panelPill.className = 'inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200';
+        if (panelDot) panelDot.className = 'w-2 h-2 rounded-full bg-rose-500';
+        if (panelText) panelText.textContent = '連線或同步發生錯誤';
+      } else {
+        navBadge.className = 'inline-flex items-center gap-1 bg-sky-100 text-sky-800 text-[11px] px-2 py-0.5 rounded-full';
+        navDot.className = 'w-1.5 h-1.5 rounded-full bg-sky-500';
+        navText.textContent = '已就緒';
+        if (headerDot) headerDot.className = 'w-2 h-2 rounded-full bg-sky-500';
+        if (headerLabel) headerLabel.textContent = 'Sheets API 已就緒';
+        if (panelPill) panelPill.className = 'inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200';
+        if (panelDot) panelDot.className = 'w-2 h-2 rounded-full bg-sky-500';
+        if (panelText) panelText.textContent = '已儲存 API 網址（待同步）';
+      }
+    }
+
+    function renderSheetsConfigUI() {
+      const urlInput = document.getElementById('input-gas-url');
+      const autoCheckbox = document.getElementById('input-auto-sync');
+      if (urlInput) urlInput.value = sheetsConfig.webhookUrl || '';
+      if (autoCheckbox) autoCheckbox.checked = sheetsConfig.autoSync !== false;
+
+      if (!sheetsConfig.webhookUrl) {
+        updateSyncStatusUI('unconfigured', '請輸入 Google Apps Script Web App URL');
+      } else if (sheetsConfig.lastSyncTime) {
+        updateSyncStatusUI('synced', sheetsConfig.lastSyncSummary);
+      } else {
+        updateSyncStatusUI('idle', 'API 網址已設定，可隨時上傳或自動同步');
+      }
+    }
+
+    async function pasteGasUrl() {
+      const input = document.getElementById('input-gas-url');
+      if (!input) return;
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            input.value = text.trim();
+            showToast('已從剪貼簿貼上網址！');
+            return;
+          }
+        }
+      } catch (e) {
+        // Fallback when clipboard read is restricted in iframe
+      }
+      input.focus();
+      showToast('請按 Ctrl+V / Cmd+V 貼上您的 Apps Script 網址');
+    }
+
+    function toggleAutoSyncSetting() {
+      const autoCheckbox = document.getElementById('input-auto-sync');
+      sheetsConfig.autoSync = autoCheckbox ? autoCheckbox.checked : true;
+      saveSheetsConfig();
+      appendSyncLog(sheetsConfig.autoSync ? '已開啟「異動自動同步」模式' : '已暫停自動同步（仍可手動同步）', 'info');
+      showToast(sheetsConfig.autoSync ? '已啟用異動自動同步至 Google Sheets' : '已暫停自動同步');
+    }
+
+    function saveGasConfig() {
+      const urlInput = document.getElementById('input-gas-url');
+      const autoCheckbox = document.getElementById('input-auto-sync');
+      const urlVal = urlInput ? urlInput.value.trim() : '';
+
+      if (urlVal && !urlVal.startsWith('https://script.google.com/')) {
+        showToast('網址格式提醒：Google Apps Script 網址通常以 https://script.google.com/ 開頭', true);
+      }
+
+      sheetsConfig.webhookUrl = urlVal;
+      sheetsConfig.autoSync = autoCheckbox ? autoCheckbox.checked : true;
+      saveSheetsConfig();
+
+      if (urlVal) {
+        updateSyncStatusUI('idle', 'API 網址已儲存，點擊「測試連線」或「立即全量上傳」');
+        appendSyncLog('已儲存 Google Apps Script Web App URL 設定。', 'success');
+        showToast('已儲存 Google Sheets API 設定！');
+      } else {
+        updateSyncStatusUI('unconfigured', '尚未設定 Web App URL');
+        showToast('已清空 API 網址');
+      }
+    }
+
+    function clearGasConfig() {
+      sheetsConfig.webhookUrl = '';
+      sheetsConfig.lastSyncTime = '';
+      sheetsConfig.lastSyncSummary = '等待設定 API 網址';
+      saveSheetsConfig();
+      renderSheetsConfigUI();
+      appendSyncLog('已清除 API 網址設定。', 'info');
+      showToast('已清除 Google Sheets API 設定');
+    }
+
+    async function testGasConnection() {
+      const urlInput = document.getElementById('input-gas-url');
+      const url = (urlInput ? urlInput.value.trim() : '') || sheetsConfig.webhookUrl;
+      if (!url) {
+        showToast('請先輸入 Google Apps Script Web App URL！', true);
+        return;
+      }
+
+      // Auto-save the entered URL first
+      sheetsConfig.webhookUrl = url;
+      saveSheetsConfig();
+
+      updateSyncStatusUI('syncing', '正在測試與 Google Apps Script 連線...');
+      appendSyncLog('發送測試連線請求至 Google Apps Script...', 'syncing');
+
+      try {
+        const testUrl = `${url}${url.includes('?') ? '&' : '?'}action=ping&t=${Date.now()}`;
+        const res = await fetch(testUrl, { method: 'GET', redirect: 'follow' });
+        const json = await res.json();
+        if (json && json.status === 'ok') {
+          const msg = `連線成功！試算表名稱：「${json.sheetName || 'Google Spreadsheet'}」`;
+          updateSyncStatusUI('synced', msg);
+          appendSyncLog(msg, 'success');
+          showToast(msg);
+        } else {
+          throw new Error(json.message || '回傳格式非預期');
+        }
+      } catch (err) {
+        const errMsg = `連線測試失敗：請確認 Apps Script 部署權限已設為「所有人 (Anyone)」`;
+        updateSyncStatusUI('error', errMsg);
+        appendSyncLog(`${errMsg} (${err.message})`, 'error');
+        showToast(errMsg, true);
+      }
+    }
+
+    function triggerAutoSync(reasonLabel = '資料更新') {
+      if (!sheetsConfig.webhookUrl || !sheetsConfig.autoSync) {
+        return;
+      }
+      if (autoSyncTimer) {
+        clearTimeout(autoSyncTimer);
+      }
+      updateSyncStatusUI('syncing', `偵測到「${reasonLabel}」，準備自動同步...`);
+      autoSyncTimer = setTimeout(() => {
+        pushAllToSheets(reasonLabel, true);
+      }, 800);
+    }
+
+    async function pushAllToSheets(reasonLabel = '手動同步', isSilent = false) {
+      const url = sheetsConfig.webhookUrl;
+      if (!url) {
+        if (!isSilent) showToast('請先設定並儲存 Google Apps Script Web App URL！', true);
+        return;
+      }
+
+      if (isSyncingNow) return;
+      isSyncingNow = true;
+      updateSyncStatusUI('syncing', `正在同步（${reasonLabel}）...`);
+      appendSyncLog(`開始同步寫入 Google Sheets（觸發原因：${reasonLabel}）...`, 'syncing');
+
+      const payload = {
+        action: 'syncAll',
+        reason: reasonLabel,
+        hotel: appState.hotel,
+        days: appState.days,
+        shopping: appState.shopping,
+        foods: appState.foods
+      };
+
+      try {
+        // Use text/plain;charset=utf-8 to avoid CORS preflight OPTIONS block in Google Apps Script
+        const res = await fetch(url, {
+          method: 'POST',
+          redirect: 'follow',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        if (result && result.status === 'ok') {
+          const nowStr = new Date().toLocaleString('zh-TW', { hour12: false });
+          const summary = `已同步 (${reasonLabel}) • ${appState.days.reduce((s, d) => s + d.events.length, 0)} 筆行程 / ${appState.shopping.length} 項購物`;
+          sheetsConfig.lastSyncTime = nowStr;
+          sheetsConfig.lastSyncSummary = summary;
+          saveSheetsConfig();
+
+          updateSyncStatusUI('synced', summary);
+          appendSyncLog(`同步成功！${summary}`, 'success');
+          if (!isSilent) {
+            showToast('已成功將最新行程與購物清單同步至 Google Sheets！');
+          } else {
+            showToast(`☁️ 已自動同步「${reasonLabel}」至 Google Sheets`);
+          }
+        } else {
+          throw new Error((result && result.message) || 'Apps Script 回傳錯誤');
+        }
+      } catch (err) {
+        const errMsg = `同步失敗：${err.message}`;
+        updateSyncStatusUI('error', errMsg);
+        appendSyncLog(errMsg, 'error');
+        showToast('Google Sheets 同步失敗，請檢查部署權限或網路連線', true);
+      } finally {
+        isSyncingNow = false;
+      }
+    }
+
+    async function pullFromSheets() {
+      const url = sheetsConfig.webhookUrl;
+      if (!url) {
+        showToast('請先設定並儲存 Google Apps Script Web App URL！', true);
+        return;
+      }
+
+      updateSyncStatusUI('syncing', '正在從 Google Sheets 拉取最新資料...');
+      appendSyncLog('正在從 Google Sheets 讀取最新工作表資料...', 'syncing');
+
+      try {
+        const pullUrl = `${url}${url.includes('?') ? '&' : '?'}action=pull&t=${Date.now()}`;
+        const res = await fetch(pullUrl, { method: 'GET', redirect: 'follow' });
+        const result = await res.json();
+
+        if (!result || result.status !== 'ok' || !result.data) {
+          throw new Error((result && result.message) || '無法讀取試算表資料');
+        }
+
+        const cloud = result.data;
+        let updatedParts = [];
+
+        if (cloud.hotel && cloud.hotel.name) {
+          appState.hotel = { ...appState.hotel, ...cloud.hotel };
+          updatedParts.push('住宿資訊');
+        }
+
+        if (Array.isArray(cloud.days) && cloud.days.length > 0) {
+          // Merge cloud events back into existing day structure to preserve UI metadata (startFromHotel, hasPresets, etc.)
+          cloud.days.forEach(cloudDay => {
+            const localDay = appState.days.find(d => d.id === cloudDay.id);
+            if (localDay) {
+              localDay.events = cloudDay.events || [];
+            } else {
+              appState.days.push({
+                id: cloudDay.id,
+                dateLabel: cloudDay.dateLabel,
+                dayTitle: cloudDay.dayTitle,
+                subtitle: '',
+                startFromHotel: true,
+                endAtHotel: true,
+                events: cloudDay.events || []
+              });
+            }
+          });
+          updatedParts.push('行程規劃');
+        }
+
+        if (Array.isArray(cloud.shopping)) {
+          appState.shopping = cloud.shopping;
+          updatedParts.push(`購物清單(${cloud.shopping.length}項)`);
+        }
+
+        if (Array.isArray(cloud.foods) && cloud.foods.length > 0) {
+          appState.foods = cloud.foods;
+          updatedParts.push(`美食清單(${cloud.foods.length}間)`);
+        }
+
+        if (updatedParts.length === 0) {
+          updateSyncStatusUI('idle', '試算表目前為空，請先點擊「全部上傳至試算表」建立初始資料');
+          appendSyncLog('試算表尚無資料列，未覆蓋本地資料。', 'info');
+          showToast('試算表目前尚無資料，建議先執行「全部上傳至試算表」', true);
+          return;
+        }
+
+        saveState();
+        renderAll();
+
+        const nowStr = new Date().toLocaleString('zh-TW', { hour12: false });
+        const summary = `已從雲端拉取更新：${updatedParts.join('、')}`;
+        sheetsConfig.lastSyncTime = nowStr;
+        sheetsConfig.lastSyncSummary = summary;
+        saveSheetsConfig();
+
+        updateSyncStatusUI('synced', summary);
+        appendSyncLog(summary, 'success');
+        showToast(`已從 Google Sheets 同步最新${updatedParts.join('、')}！`);
+      } catch (err) {
+        const errMsg = `拉取失敗：${err.message}`;
+        updateSyncStatusUI('error', errMsg);
+        appendSyncLog(errMsg, 'error');
+        showToast('從 Google Sheets 拉取資料失敗，請確認試算表格式', true);
+      }
+    }
+
+    function copyGasScript() {
+      const codeEl = document.getElementById('gas-script-template');
+      if (!codeEl) return;
+      const tempInput = document.createElement('textarea');
+      tempInput.value = codeEl.textContent;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast('已複製完整 Google Apps Script (Code.gs) 程式碼！');
+      } catch (err) {
+        showToast('複製失敗，請手動選取程式碼區塊複製', true);
+      }
+      document.body.removeChild(tempInput);
+    }
+
     function loadState() {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (!parsed.foods) {
-            parsed.foods = JSON.parse(JSON.stringify(DEFAULT_DATA.foods));
-          }
-          return parsed;
+          return {
+            hotel: { ...DEFAULT_DATA.hotel, ...(parsed.hotel || {}) },
+            days: Array.isArray(parsed.days) && parsed.days.length > 0 ? parsed.days : JSON.parse(JSON.stringify(DEFAULT_DATA.days)),
+            shopping: Array.isArray(parsed.shopping) ? parsed.shopping : JSON.parse(JSON.stringify(DEFAULT_DATA.shopping)),
+            foods: Array.isArray(parsed.foods) && parsed.foods.length > 0 ? parsed.foods : JSON.parse(JSON.stringify(DEFAULT_DATA.foods))
+          };
         }
       } catch (e) {
-        console.error('Failed to load state from localStorage', e);
+        console.error('Failed to load state from localStorage:', e);
       }
       return JSON.parse(JSON.stringify(DEFAULT_DATA));
     }
@@ -1139,51 +1913,428 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
       } catch (e) {
-        console.error('Failed to save state', e);
+        console.error('Failed to save state to localStorage:', e);
       }
     }
 
-    function showToast(message, isError = false) {
+    function showToast(message, isWarning = false) {
       const toast = document.getElementById('toast');
-      const msgEl = document.getElementById('toast-msg');
-      const iconEl = document.getElementById('toast-icon');
-      msgEl.textContent = message;
-      iconEl.className = isError
-        ? 'fa-solid fa-circle-exclamation text-rose-400'
+      const toastMsg = document.getElementById('toast-msg');
+      const toastIcon = document.getElementById('toast-icon');
+      if (!toast || !toastMsg || !toastIcon) return;
+
+      toastMsg.textContent = message;
+      toastIcon.className = isWarning
+        ? 'fa-solid fa-circle-exclamation text-amber-400'
         : 'fa-solid fa-circle-check text-emerald-400';
 
       toast.classList.remove('translate-y-20', 'opacity-0');
-      setTimeout(() => {
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
         toast.classList.add('translate-y-20', 'opacity-0');
-      }, 2600);
+      }, 2800);
     }
 
-    // ==================== NAVIGATION TABS ====================
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
-      document.getElementById(`view-${tabName}`).classList.remove('hidden');
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
+    // ==================== NAVIGATION & TAB SWITCHING ====================
+    function switchTab(tabName) {
+      // Hide all tab views
+      document.querySelectorAll('.tab-view').forEach(section => {
+        section.classList.add('hidden');
+      });
+      const targetView = document.getElementById(`view-${tabName}`);
+      if (targetView) {
+        targetView.classList.remove('hidden');
+      }
+
+      // Reset all nav tab styles
       document.querySelectorAll('.nav-tab').forEach(btn => {
-        btn.classList.remove('bg-indigoTokyo-700', 'text-white', 'shadow-xs');
+        btn.classList.remove('active', 'bg-indigoTokyo-700', 'text-white', 'shadow-xs');
         btn.classList.add('text-slate-600', 'hover:bg-slate-100');
       });
 
       const activeBtn = document.getElementById(`tab-${tabName}`);
-      activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
-      activeBtn.classList.add('bg-indigoTokyo-700', 'text-white', 'shadow-xs');
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'bg-indigoTokyo-700', 'text-white', 'shadow-xs');
+        activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+      }
     }
 
-    // ==================== FOOD LIST RENDERING & ACTIONS ====================
+    // ==================== ACCOMMODATION FUNCTIONS ====================
+    function renderHotelInfo() {
+      const h = appState.hotel;
+      const mapQuery = encodeURIComponent(h.address || h.name);
+      const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+
+      const headerName = document.getElementById('header-hotel-name');
+      const headerAddr = document.getElementById('header-hotel-address');
+      const headerLink = document.getElementById('header-hotel-map-link');
+
+      if (headerName) headerName.textContent = h.name;
+      if (headerAddr) headerAddr.textContent = h.address;
+      if (headerLink) headerLink.href = mapUrl;
+
+      const accName = document.getElementById('acc-card-name');
+      const accAddr = document.getElementById('acc-card-address');
+      const accStation = document.getElementById('acc-card-station');
+      const accNote = document.getElementById('acc-card-note');
+      const accLink = document.getElementById('acc-card-map-link');
+
+      if (accName) accName.textContent = h.name;
+      if (accAddr) accAddr.innerHTML = `<i class="fa-solid fa-location-dot text-sakura-500 mt-0.5"></i><span>${escapeHtml(h.address)}</span>`;
+      if (accStation) accStation.innerHTML = `<i class="fa-solid fa-train-subway text-indigoTokyo-600 mr-1"></i>${escapeHtml(h.station)}`;
+      if (accNote) accNote.textContent = h.note;
+      if (accLink) accLink.href = mapUrl;
+    }
+
+    function copyHotelAddress() {
+      const textToCopy = appState.hotel.address || appState.hotel.name;
+      const tempInput = document.createElement('textarea');
+      tempInput.value = textToCopy;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast(`已複製日文地址：${textToCopy}`);
+      } catch (e) {
+        showToast('複製失敗，請手動選取複製', true);
+      }
+      document.body.removeChild(tempInput);
+    }
+
+    function openHotelModal() {
+      document.getElementById('input-hotel-name').value = appState.hotel.name || '';
+      document.getElementById('input-hotel-address').value = appState.hotel.address || '';
+      document.getElementById('input-hotel-station').value = appState.hotel.station || '';
+      document.getElementById('input-hotel-note').value = appState.hotel.note || '';
+      document.getElementById('hotel-modal').classList.remove('hidden');
+    }
+
+    function closeHotelModal() {
+      document.getElementById('hotel-modal').classList.add('hidden');
+    }
+
+    function saveHotelInfo(e) {
+      e.preventDefault();
+      appState.hotel.name = document.getElementById('input-hotel-name').value.trim();
+      appState.hotel.address = document.getElementById('input-hotel-address').value.trim();
+      appState.hotel.station = document.getElementById('input-hotel-station').value.trim();
+      appState.hotel.note = document.getElementById('input-hotel-note').value.trim();
+
+      saveState();
+      renderHotelInfo();
+      renderItinerary();
+      closeHotelModal();
+      triggerAutoSync('更新住宿資訊');
+      showToast('已更新並標註住宿地點！');
+    }
+
+    // ==================== ITINERARY RENDERING & ACTIONS ====================
+    function renderDayPills() {
+      const container = document.getElementById('day-pills');
+      if (!container) return;
+
+      const pills = [
+        { id: 'all', label: '全部 6 天' },
+        ...appState.days.map(d => ({ id: d.id, label: d.dateLabel }))
+      ];
+
+      container.innerHTML = pills.map(p => {
+        const isActive = selectedDayFilter === p.id;
+        return `
+          <button onclick="filterDay('${p.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+            isActive
+              ? 'bg-slate-900 text-white shadow-2xs'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          }">
+            ${escapeHtml(p.label)}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function filterDay(dayId) {
+      selectedDayFilter = dayId;
+      renderDayPills();
+      renderItinerary();
+    }
+
+    function getTagBadgeClass(tag) {
+      switch (tag) {
+        case '既定行程':
+          return 'bg-indigo-100 text-indigo-800 border-indigo-200';
+        case '交通/航班':
+          return 'bg-sky-100 text-sky-800 border-sky-200';
+        case '美食餐廳':
+          return 'bg-amber-100 text-amber-800 border-amber-200';
+        default:
+          return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+      }
+    }
+
+    function renderItinerary() {
+      const container = document.getElementById('itinerary-container');
+      if (!container) return;
+
+      const visibleDays = selectedDayFilter === 'all'
+        ? appState.days
+        : appState.days.filter(d => d.id === selectedDayFilter);
+
+      container.innerHTML = visibleDays.map(day => {
+        const presetBanner = day.hasPresets ? `
+          <div class="px-5 py-3 bg-indigo-50/70 border-b border-indigo-100 flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-semibold text-indigoTokyo-800"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>12/12 自由日一鍵套用主題路線：</span>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="applyFreeDayPreset('A')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-indigo-100 text-indigoTokyo-700 border border-indigo-200 text-xs font-semibold transition">+ 路線A：淺草雷門 → 銀座逛街</button>
+              <button onclick="applyFreeDayPreset('B')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-indigo-100 text-indigoTokyo-700 border border-indigo-200 text-xs font-semibold transition">+ 路線B：中目黑 → 代官山 → 澀谷夜景</button>
+            </div>
+          </div>
+        ` : '';
+
+        const startNodeHtml = day.startFromHotel ? `
+          <div class="relative pl-10 pb-4 timeline-item timeline-line">
+            <div class="absolute left-1.5 top-1 w-6 h-6 rounded-full bg-sakura-100 border-2 border-sakura-500 text-sakura-600 flex items-center justify-center text-[10px] z-10">
+              <i class="fa-solid fa-house"></i>
+            </div>
+            <div class="inline-flex flex-wrap items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sakura-50/80 border border-sakura-200/70 text-xs text-sakura-900">
+              <span class="font-bold">出發據點：</span>
+              <span>${escapeHtml(appState.hotel.name)}</span>
+              <span class="text-sakura-600 text-[11px]">（幡ヶ谷駅）</span>
+            </div>
+          </div>
+        ` : '';
+
+        const eventsHtml = day.events.map(ev => {
+          const transitHtml = ev.transit ? `
+            <div class="mt-2.5 p-2.5 rounded-xl bg-sky-50/80 border border-sky-200/70 text-xs text-sky-950 space-y-1">
+              <div class="font-bold text-sky-800 flex items-center gap-1.5">
+                <i class="fa-solid fa-train-subway"></i>
+                <span>交通方式與轉乘指引</span>
+              </div>
+              <div class="leading-relaxed whitespace-pre-line text-slate-700">${escapeHtml(ev.transit)}</div>
+            </div>
+          ` : '';
+
+          const noteHtml = ev.note ? `
+            <div class="mt-2 text-xs text-slate-600 leading-relaxed whitespace-pre-line">${escapeHtml(ev.note)}</div>
+          ` : '';
+
+          return `
+            <div class="relative pl-10 pb-5 timeline-item timeline-line">
+              <button onclick="toggleEventDone('${day.id}', '${ev.id}')" title="點擊切換完成狀態" class="absolute left-1.5 top-1.5 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs transition z-10 ${
+                ev.done
+                  ? 'bg-emerald-500 border-emerald-500 text-white'
+                  : 'bg-white border-indigoTokyo-600 text-transparent hover:border-emerald-500'
+              }">
+                <i class="fa-solid fa-check"></i>
+              </button>
+
+              <div class="p-3.5 sm:p-4 rounded-xl border transition ${
+                ev.done
+                  ? 'bg-slate-50/80 border-slate-200 opacity-75'
+                  : 'bg-white border-slate-200 hover:border-indigo-200 shadow-2xs'
+              }">
+                <div class="flex flex-wrap items-start justify-between gap-2">
+                  <div class="space-y-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-800">${escapeHtml(ev.time)}</span>
+                      <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md border ${getTagBadgeClass(ev.tag)}">${escapeHtml(ev.tag)}</span>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-sm sm:text-base ${ev.done ? 'line-through text-slate-500' : ''}">${escapeHtml(ev.title)}</h4>
+                  </div>
+                  <div class="flex items-center gap-1 shrink-0">
+                    <button onclick="openAddEventModal('${day.id}')" title="在此日新增活動" class="w-7 h-7 rounded-lg text-slate-400 hover:text-indigoTokyo-700 hover:bg-indigo-50 flex items-center justify-center text-xs transition">
+                      <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button onclick="deleteEvent('${day.id}', '${ev.id}')" title="刪除此項目" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center text-xs transition">
+                      <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                  </div>
+                </div>
+                ${noteHtml}
+                ${transitHtml}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const endNodeHtml = day.endAtHotel ? `
+          <div class="relative pl-10 timeline-item">
+            <div class="absolute left-1.5 top-1 w-6 h-6 rounded-full bg-indigo-100 border-2 border-indigoTokyo-600 text-indigoTokyo-700 flex items-center justify-center text-[10px] z-10">
+              <i class="fa-solid fa-bed"></i>
+            </div>
+            <div class="inline-flex flex-wrap items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50/70 border border-indigo-200/70 text-xs text-indigoTokyo-900">
+              <span class="font-bold">返回住宿休息：</span>
+              <span>${escapeHtml(appState.hotel.name)}</span>
+            </div>
+          </div>
+        ` : '';
+
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+            <div class="px-5 py-4 bg-gradient-to-r from-slate-900 to-indigoTokyo-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-sakura-500 text-white text-xs font-bold">${escapeHtml(day.dateLabel)}</span>
+                  <h3 class="font-bold text-base sm:text-lg">${escapeHtml(day.dayTitle)}</h3>
+                </div>
+                ${day.subtitle ? `<p class="text-xs text-indigo-200 mt-1">${escapeHtml(day.subtitle)}</p>` : ''}
+              </div>
+              <button onclick="openAddEventModal('${day.id}')" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition self-start sm:self-center flex items-center gap-1.5 border border-white/15">
+                <i class="fa-solid fa-plus"></i>
+                <span>新增當日活動</span>
+              </button>
+            </div>
+            ${presetBanner}
+            <div class="p-5">
+              ${startNodeHtml}
+              ${eventsHtml}
+              ${endNodeHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleEventDone(dayId, eventId) {
+      const day = appState.days.find(d => d.id === dayId);
+      if (!day) return;
+      const ev = day.events.find(e => e.id === eventId);
+      if (ev) {
+        ev.done = !ev.done;
+        saveState();
+        renderItinerary();
+        triggerAutoSync(`行程狀態更新：${ev.title}`);
+      }
+    }
+
+    function deleteEvent(dayId, eventId) {
+      const day = appState.days.find(d => d.id === dayId);
+      if (!day) return;
+      day.events = day.events.filter(e => e.id !== eventId);
+      saveState();
+      renderItinerary();
+      triggerAutoSync('刪除行程項目');
+      showToast('已刪除該行程項目');
+    }
+
+    function applyFreeDayPreset(route) {
+      const day3 = appState.days.find(d => d.id === 'day3');
+      if (!day3) return;
+
+      if (route === 'A') {
+        day3.events.push(
+          {
+            id: 'preset-a1-' + Date.now(),
+            time: '10:00',
+            title: '淺草寺雷門 & 仲見世通散步吃小吃',
+            tag: '自由推薦',
+            transit: '幡ヶ谷駅搭京王新線至新宿轉都營新宿線至「馬喰橫山」轉都營淺草線至「淺草駅」（約 38 分鐘，¥420）。',
+            note: '參拜雷門、拍晴空塔倒影，可順路吃 Bacon & Eggs 淺草早午餐！',
+            done: false
+          },
+          {
+            id: 'preset-a2-' + (Date.now() + 1),
+            time: '14:30',
+            title: '銀座中央通步行者天國 & GINZA SIX 下午茶',
+            tag: '自由推薦',
+            transit: '從淺草搭東京 Metro 銀座線直達「銀座駅」（約 18 分鐘，¥180）。',
+            note: '週末下午銀座中央通封街為步行者天國，逛街拍照最愜意。',
+            done: false
+          }
+        );
+        showToast('已將「路線A：淺草雷門 → 銀座逛街」加入 12/12 行程！');
+      } else {
+        day3.events.push(
+          {
+            id: 'preset-b1-' + Date.now(),
+            time: '11:30',
+            title: '中目黑高架下選物店 & 目黑川咖啡散步',
+            tag: '自由推薦',
+            transit: '搭京王巴士【渋66】至澀谷轉東急東橫線至「中目黑駅」（約 32 分鐘）。',
+            note: '造訪 ONIBUS COFFEE、星巴克臻選東京烘焙工坊，晚餐可預約中目黑 Nou！',
+            done: false
+          },
+          {
+            id: 'preset-b2-' + (Date.now() + 1),
+            time: '17:00',
+            title: 'SHIBUYA SKY 澀谷高空展望台看日落夜景',
+            tag: '自由推薦',
+            transit: '從中目黑搭東急東橫線 2 站回「渋谷駅」（約 4 分鐘，¥140）。',
+            note: '建議提前線上預約日落時段門票，360 度俯瞰東京鐵塔與富士山晚霞。',
+            done: false
+          }
+        );
+        showToast('已將「路線B：中目黑 → 代官山 → 澀谷夜景」加入 12/12 行程！');
+      }
+
+      saveState();
+      renderItinerary();
+      triggerAutoSync(`套用自由日路線 ${route}`);
+    }
+
+    function openAddEventModal(defaultDayId = 'day4') {
+      document.getElementById('event-day').value = defaultDayId;
+      document.getElementById('event-time').value = '';
+      document.getElementById('event-title').value = '';
+      document.getElementById('event-tag').value = '自由推薦';
+      document.getElementById('event-transit').value = '';
+      document.getElementById('event-note').value = '';
+      document.getElementById('event-modal').classList.remove('hidden');
+    }
+
+    function closeAddEventModal() {
+      document.getElementById('event-modal').classList.add('hidden');
+    }
+
+    function saveNewEvent(e) {
+      e.preventDefault();
+      const dayId = document.getElementById('event-day').value;
+      const time = document.getElementById('event-time').value.trim();
+      const title = document.getElementById('event-title').value.trim();
+      const tag = document.getElementById('event-tag').value;
+      const transit = document.getElementById('event-transit').value.trim();
+      const note = document.getElementById('event-note').value.trim();
+
+      const day = appState.days.find(d => d.id === dayId);
+      if (day && title) {
+        day.events.push({
+          id: 'ev-' + Date.now(),
+          time: time || '彈性時間',
+          title,
+          tag,
+          transit,
+          note,
+          done: false
+        });
+        saveState();
+        renderItinerary();
+        closeAddEventModal();
+        triggerAutoSync(`新增行程：${title}`);
+        showToast(`已新增行程至 ${day.dateLabel}`);
+      }
+    }
+
+    // ==================== FOOD WISHLIST RENDERING & ACTIONS ====================
     function filterFoodArea(area) {
       selectedFoodArea = area;
       document.querySelectorAll('.food-area-btn').forEach(btn => {
-        if (btn.dataset.area === area) {
-          btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
-          btn.classList.add('bg-slate-900', 'text-white');
-        } else {
-          btn.classList.remove('bg-slate-900', 'text-white');
-          btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
-        }
+        const isActive = btn.dataset.area === area;
+        btn.className = isActive
+          ? 'food-area-btn active px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 text-white transition'
+          : 'food-area-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition';
       });
       renderFoods();
     }
@@ -1191,142 +2342,109 @@
     function filterFoodStatus(status) {
       selectedFoodStatus = status;
       document.querySelectorAll('.food-status-btn').forEach(btn => {
-        if (btn.dataset.status === status) {
-          btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
-          btn.classList.add('bg-amber-600', 'text-white');
-        } else {
-          btn.classList.remove('bg-amber-600', 'text-white');
-          btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
-        }
+        const isActive = btn.dataset.status === status;
+        btn.className = isActive
+          ? 'food-status-btn active px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-amber-600 text-white transition'
+          : 'food-status-btn px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition';
       });
       renderFoods();
     }
 
     function renderFoods() {
-      const foods = appState.foods || [];
-      const totalCount = foods.length;
-      const visitedCount = foods.filter(f => f.visited).length;
-
-      const foodBadge = document.getElementById('food-badge');
-      if (foodBadge) foodBadge.textContent = `${visitedCount}/${totalCount}`;
-
-      const visitedSummary = document.getElementById('food-visited-summary');
-      if (visitedSummary) visitedSummary.textContent = `已造訪 ${visitedCount} / ${totalCount} 間`;
-
-      let filtered = foods;
-      if (selectedFoodArea !== 'all') {
-        filtered = filtered.filter(f => f.area === selectedFoodArea);
-      }
-      if (selectedFoodStatus === 'visited') {
-        filtered = filtered.filter(f => f.visited);
-      } else if (selectedFoodStatus === 'unvisited') {
-        filtered = filtered.filter(f => !f.visited);
-      }
-
       const grid = document.getElementById('food-grid');
+      const badge = document.getElementById('food-badge');
+      const summary = document.getElementById('food-visited-summary');
+
+      const totalCount = appState.foods.length;
+      const visitedCount = appState.foods.filter(f => f.visited).length;
+
+      if (badge) badge.textContent = `${visitedCount}/${totalCount}`;
+      if (summary) summary.textContent = `已造訪 ${visitedCount} / ${totalCount} 間`;
+
       if (!grid) return;
+
+      const filtered = appState.foods.filter(f => {
+        const matchArea = selectedFoodArea === 'all' || f.area === selectedFoodArea;
+        const matchStatus =
+          selectedFoodStatus === 'all' ||
+          (selectedFoodStatus === 'visited' && f.visited) ||
+          (selectedFoodStatus === 'unvisited' && !f.visited);
+        return matchArea && matchStatus;
+      });
 
       if (filtered.length === 0) {
         grid.innerHTML = `
-          <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-8 text-center text-sm text-slate-500">
-            目前篩選條件下沒有符合的美食餐廳，可切換篩選條件或點擊右上角「+ 新增自訂美食」。
+          <div class="col-span-full bg-white rounded-2xl p-8 border border-slate-200 text-center text-slate-500 text-sm">
+            目前篩選條件下沒有符合的餐廳項目，可切換上方區域或狀態篩選。
           </div>
         `;
         return;
       }
 
-      grid.innerHTML = filtered.map(food => {
-        const mapQuery = encodeURIComponent(`${food.address || ''} ${food.jpName || food.name}`.trim());
+      grid.innerHTML = filtered.map(f => {
+        const mapQuery = encodeURIComponent(`${f.name.replace(/^\d+\.\s*/, '')} ${f.address || '東京'}`);
         const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
-        const needRes = food.reservation && food.reservation.includes('預約');
 
         return `
-          <div class="bg-white rounded-2xl border p-5 shadow-2xs flex flex-col justify-between transition ${
-            food.visited ? 'border-emerald-200 bg-emerald-50/20' : 'border-slate-200 hover:border-amber-300'
+          <div class="bg-white rounded-2xl p-5 border transition flex flex-col justify-between gap-4 ${
+            f.visited ? 'border-emerald-200 bg-emerald-50/20' : 'border-slate-200 hover:border-amber-300 shadow-2xs'
           }">
-            <div class="space-y-3">
-              <!-- Top Badges & Visited Toggle -->
-              <div class="flex items-center justify-between gap-2">
-                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">${escapeHtml(food.area)}</span>
-                <div class="flex items-center gap-2">
-                  <button onclick="toggleFoodVisited('${food.id}')" class="px-2.5 py-1 rounded-lg text-xs font-semibold border transition flex items-center gap-1 ${
-                    food.visited
+            <div class="space-y-2.5">
+              <div class="flex items-start justify-between gap-2">
+                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900">${escapeHtml(f.area)}</span>
+                <div class="flex items-center gap-1.5">
+                  <button onclick="toggleFoodVisited('${f.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition flex items-center gap-1 ${
+                    f.visited
                       ? 'bg-emerald-600 text-white border-emerald-600'
-                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-emerald-50 hover:text-emerald-700'
                   }">
-                    <i class="fa-solid ${food.visited ? 'fa-circle-check' : 'fa-circle'} text-[11px]"></i>
-                    <span>${food.visited ? '已造訪' : '標記造訪'}</span>
+                    <i class="fa-solid ${f.visited ? 'fa-circle-check' : 'fa-regular fa-circle'}"></i>
+                    <span>${f.visited ? '已造訪' : '標記造訪'}</span>
                   </button>
-                  <button onclick="deleteFoodItem('${food.id}')" title="刪除此餐廳" class="text-slate-300 hover:text-rose-500 transition p-1">
-                    <i class="fa-solid fa-trash-can text-xs"></i>
+                  <button onclick="deleteFoodItem('${f.id}')" title="移除此餐廳" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center text-xs transition">
+                    <i class="fa-regular fa-trash-can"></i>
                   </button>
                 </div>
               </div>
 
-              <!-- Name & Japanese Subtitle -->
               <div>
-                <h3 class="font-bold text-slate-900 text-base leading-snug ${food.visited ? 'text-slate-600' : ''}">${escapeHtml(food.name)}</h3>
-                ${food.jpName ? `<div class="text-xs text-slate-500 font-medium mt-0.5">${escapeHtml(food.jpName)}</div>` : ''}
-                ${food.address ? `
-                  <div class="text-[11px] text-slate-500 mt-1 flex items-start gap-1">
-                    <i class="fa-solid fa-location-dot text-sakura-500 mt-0.5"></i>
-                    <span>${escapeHtml(food.address)}</span>
-                  </div>
-                ` : ''}
+                <h3 class="font-bold text-slate-900 text-base">${escapeHtml(f.name)}</h3>
+                ${f.jpName ? `<p class="text-xs text-slate-500 mt-0.5">${escapeHtml(f.jpName)}</p>` : ''}
               </div>
 
-              <!-- Signature Dish -->
-              <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-100 text-xs text-slate-800">
-                <span class="font-bold text-amber-900"><i class="fa-solid fa-award text-amber-500 mr-1"></i>招牌必點：</span>
-                <span>${escapeHtml(food.signature)}</span>
-              </div>
-
-              <!-- Price & Reservation Pills -->
-              <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
-                ${food.priceRange ? `
-                  <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-semibold">
-                    <i class="fa-solid fa-yen-sign text-slate-400 mr-0.5"></i>${escapeHtml(food.priceRange)}
-                  </span>
-                ` : ''}
-                ${food.reservation ? `
-                  <span class="px-2 py-0.5 rounded-md font-semibold border ${
-                    needRes
-                      ? 'bg-rose-50 text-rose-700 border-rose-200'
-                      : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                  }">
-                    <i class="fa-regular fa-clock mr-1"></i>${escapeHtml(food.reservation)}
-                  </span>
-                ` : ''}
-              </div>
-
-              <!-- Transit from Hatagaya -->
-              ${food.transit ? `
-                <div class="p-2.5 rounded-xl bg-sky-50/80 border border-sky-100 text-xs text-slate-700 leading-relaxed">
-                  <div class="font-bold text-sky-900 mb-0.5 flex items-center gap-1">
-                    <i class="fa-solid fa-train-subway text-sky-600"></i>
-                    <span>從幡ヶ谷出發交通：</span>
-                  </div>
-                  <span>${escapeHtml(food.transit)}</span>
+              <div class="space-y-1.5 text-xs text-slate-600">
+                <div class="p-2.5 rounded-xl bg-amber-50/60 border border-amber-100 text-slate-800">
+                  <strong class="text-amber-900">招牌必點：</strong>${escapeHtml(f.signature)}
                 </div>
-              ` : ''}
+                ${f.address ? `<div class="flex items-start gap-1.5"><i class="fa-solid fa-location-dot text-sakura-500 mt-0.5"></i><span>${escapeHtml(f.address)}</span></div>` : ''}
+                <div class="flex flex-wrap gap-2 pt-0.5">
+                  ${f.priceRange ? `<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium">💰 ${escapeHtml(f.priceRange)}</span>` : ''}
+                  ${f.reservation ? `<span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigoTokyo-800 font-medium">📅 ${escapeHtml(f.reservation)}</span>` : ''}
+                </div>
+                ${f.transit ? `
+                  <div class="p-2.5 rounded-xl bg-sky-50/80 border border-sky-100 text-slate-700 leading-relaxed">
+                    <strong class="text-sky-800"><i class="fa-solid fa-train-subway mr-1"></i>幡ヶ谷出發交通：</strong>${escapeHtml(f.transit)}
+                  </div>
+                ` : ''}
+              </div>
             </div>
 
-            <!-- Action Footer: Google Maps + Add to Specific Day -->
-            <div class="pt-3.5 mt-4 border-t border-slate-100 space-y-2">
-              <div class="flex items-center gap-2">
-                <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center justify-center gap-1 shrink-0">
-                  <i class="fa-solid fa-map-location-dot text-emerald-600"></i>
-                  <span>地圖</span>
-                </a>
-                <select id="food-day-select-${food.id}" class="flex-1 min-w-0 px-2.5 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600">
-                  <option value="day1">12/10 (四) Day 1</option>
-                  <option value="day2">12/11 (五) Day 2</option>
-                  <option value="day3" selected>12/12 (六) 自由日</option>
-                  <option value="day4">12/13 (日) 採購日</option>
-                  <option value="day5">12/14 (一) Day 5</option>
-                  <option value="day6">12/15 (二) Day 6</option>
+            <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+              <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center gap-1">
+                <i class="fa-solid fa-map-location-dot text-emerald-600"></i>
+                <span>地圖</span>
+              </a>
+
+              <div class="flex items-center gap-1.5">
+                <select id="food-day-select-${f.id}" class="px-2 py-1.5 rounded-xl border border-slate-200 text-xs bg-white text-slate-700 font-medium focus:outline-none">
+                  <option value="day1">12/10 Day1</option>
+                  <option value="day2">12/11 Day2</option>
+                  <option value="day3" selected>12/12 自由日</option>
+                  <option value="day4">12/13 採購日</option>
+                  <option value="day5">12/14 Day5</option>
+                  <option value="day6">12/15 Day6</option>
                 </select>
-                <button onclick="addFoodToSelectedDay('${food.id}')" class="px-3 py-2 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-xs font-semibold transition flex items-center justify-center gap-1 shrink-0">
+                <button onclick="addFoodToSelectedDay('${f.id}')" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition flex items-center gap-1 shadow-2xs">
                   <i class="fa-solid fa-plus"></i>
                   <span>加入行程</span>
                 </button>
@@ -1343,6 +2461,7 @@
         food.visited = !food.visited;
         saveState();
         renderFoods();
+        triggerAutoSync(`美食造訪狀態：${food.name.replace(/^\d+\.\s*/, '')}`);
         showToast(food.visited ? `已標記「${food.name}」為已造訪！` : `已取消「${food.name}」造訪標記`);
       }
     }
@@ -1351,6 +2470,7 @@
       appState.foods = appState.foods.filter(f => f.id !== foodId);
       saveState();
       renderFoods();
+      triggerAutoSync('移除美食項目');
       showToast('已從美食清單移除該餐廳');
     }
 
@@ -1384,13 +2504,14 @@
 
       saveState();
       renderItinerary();
+      triggerAutoSync(`新增美食行程：${cleanTitle}`);
       showToast(`已將「${cleanTitle}」與交通資訊加入 ${day.dateLabel} 行程！`);
     }
 
     function openAddFoodModal() {
       document.getElementById('food-input-name').value = '';
       document.getElementById('food-input-price').value = '';
-      document.getElementById('food-input-time').value = '12:30';
+      document.getElementById('food-input-time').value = '';
       document.getElementById('food-input-signature').value = '';
       document.getElementById('food-input-address').value = '';
       document.getElementById('food-input-transit').value = '';
@@ -1407,24 +2528,23 @@
       const area = document.getElementById('food-input-area').value;
       const priceRange = document.getElementById('food-input-price').value.trim();
       const reservation = document.getElementById('food-input-reservation').value;
-      const suggestedTime = document.getElementById('food-input-time').value.trim();
+      const suggestedTime = document.getElementById('food-input-time').value.trim() || '12:30';
       const signature = document.getElementById('food-input-signature').value.trim();
       const address = document.getElementById('food-input-address').value.trim();
       const transit = document.getElementById('food-input-transit').value.trim();
 
       if (!name || !signature) return;
 
-      const nextNum = (appState.foods ? appState.foods.length : 0) + 1;
       appState.foods.push({
         id: 'food-' + Date.now(),
-        name: `${nextNum}. ${name}`,
+        name,
         jpName: '',
         area,
         address,
         signature,
-        priceRange: priceRange || '依現場菜單',
+        priceRange,
         reservation,
-        suggestedTime: suggestedTime || '12:30',
+        suggestedTime,
         transit,
         visited: false
       });
@@ -1432,545 +2552,103 @@
       saveState();
       renderFoods();
       closeAddFoodModal();
+      triggerAutoSync(`新增自訂美食：${name}`);
       showToast(`已將「${name}」加入美食清單！`);
-    }
-
-    // ==================== ACCOMMODATION FUNCTIONS ====================
-    function renderHotelInfo() {
-      const { name, address, station, note } = appState.hotel;
-      const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || name)}`;
-
-      document.getElementById('header-hotel-name').textContent = name;
-      document.getElementById('header-hotel-address').textContent = address || '尚未填寫地址';
-      const headerMapLink = document.getElementById('header-hotel-map-link');
-      if (headerMapLink) headerMapLink.href = mapUrl;
-
-      document.getElementById('acc-card-name').textContent = name;
-      document.getElementById('acc-card-address').innerHTML = `<i class="fa-solid fa-location-dot text-sakura-500 mt-0.5"></i><span>${escapeHtml(address || '尚未填寫具體地址')}</span>`;
-      const stationEl = document.getElementById('acc-card-station');
-      if (stationEl) {
-        stationEl.innerHTML = `<i class="fa-solid fa-train-subway text-indigoTokyo-600 mr-1"></i>${escapeHtml(station || '京王新線「幡ヶ谷駅」北口 步行約 6 分鐘')}`;
-      }
-      document.getElementById('acc-card-note').textContent = note || '入住日期：12/10 (四) － 退房日期：12/15 (二)，共 5 晚';
-      const cardMapLink = document.getElementById('acc-card-map-link');
-      if (cardMapLink) cardMapLink.href = mapUrl;
-
-      const shortName = name.split('(')[0].trim();
-      document.querySelectorAll('.sync-hotel-short').forEach(el => {
-        el.textContent = shortName;
-      });
-    }
-
-    function copyHotelAddress() {
-      const textToCopy = `${appState.hotel.address} (${appState.hotel.name})`;
-      const tempInput = document.createElement('textarea');
-      tempInput.value = textToCopy;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      try {
-        document.execCommand('copy');
-        showToast('已複製日文地址，可直接貼上叫車或導航！');
-      } catch (err) {
-        showToast('複製失敗，請手動選取複製', true);
-      }
-      document.body.removeChild(tempInput);
-    }
-
-    function openHotelModal() {
-      document.getElementById('input-hotel-name').value = appState.hotel.name;
-      document.getElementById('input-hotel-address').value = appState.hotel.address;
-      document.getElementById('input-hotel-station').value = appState.hotel.station || '京王新線「幡ヶ谷駅」北口 步行約 6 分鐘';
-      document.getElementById('input-hotel-note').value = appState.hotel.note || '';
-      document.getElementById('hotel-modal').classList.remove('hidden');
-    }
-
-    function closeHotelModal() {
-      document.getElementById('hotel-modal').classList.add('hidden');
-    }
-
-    function saveHotelInfo(e) {
-      e.preventDefault();
-      const nameVal = document.getElementById('input-hotel-name').value.trim();
-      const addrVal = document.getElementById('input-hotel-address').value.trim();
-      const stationVal = document.getElementById('input-hotel-station').value.trim();
-      const noteVal = document.getElementById('input-hotel-note').value.trim();
-
-      if (!nameVal) return;
-
-      appState.hotel = {
-        name: nameVal,
-        address: addrVal || '〒151-0072 東京都渋谷区幡ヶ谷2-37-16 セレッソ幡ヶ谷315',
-        station: stationVal || '京王新線「幡ヶ谷駅」北口 步行約 6 分鐘',
-        note: noteVal || '入住日期：12/10 (四) － 退房日期：12/15 (二)，共 5 晚'
-      };
-      saveState();
-      renderHotelInfo();
-      renderItinerary();
-      closeHotelModal();
-      showToast('已更新並標註住宿地點！');
-    }
-
-    function quickSetHotel(name, address) {
-      appState.hotel = {
-        name,
-        address,
-        note: '入住日期：12/10 (四) － 退房日期：12/15 (二)，共 5 晚'
-      };
-      saveState();
-      renderHotelInfo();
-      renderItinerary();
-      showToast(`已套用住宿區域：${name.split('(')[0].trim()}`);
-    }
-
-    // ==================== ITINERARY RENDERING & ACTIONS ====================
-    function renderDayPills() {
-      const container = document.getElementById('day-pills');
-      const pills = [
-        { id: 'all', label: '全部 6 天' },
-        ...appState.days.map(d => ({ id: d.id, label: d.dateLabel }))
-      ];
-
-      container.innerHTML = pills.map(p => {
-        const isActive = selectedDayFilter === p.id;
-        return `
-          <button onclick="selectDayFilter('${p.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
-            isActive
-              ? 'bg-slate-900 text-white shadow-2xs'
-              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-          }">
-            ${p.label}
-          </button>
-        `;
-      }).join('');
-    }
-
-    function selectDayFilter(dayId) {
-      selectedDayFilter = dayId;
-      renderDayPills();
-      renderItinerary();
-    }
-
-    function getTagStyle(tag) {
-      switch (tag) {
-        case '既定行程':
-          return 'bg-indigoTokyo-100 text-indigoTokyo-800 border-indigo-200';
-        case '交通/航班':
-          return 'bg-sky-100 text-sky-800 border-sky-200';
-        case '美食餐廳':
-          return 'bg-amber-100 text-amber-800 border-amber-200';
-        default:
-          return 'bg-sakura-50 text-sakura-600 border-sakura-200';
-      }
-    }
-
-    function renderItinerary() {
-      const container = document.getElementById('itinerary-container');
-      const shortHotelName = appState.hotel.name.split('(')[0].trim();
-      const shortAddress = appState.hotel.address;
-
-      const filteredDays = selectedDayFilter === 'all'
-        ? appState.days
-        : appState.days.filter(d => d.id === selectedDayFilter);
-
-      container.innerHTML = filteredDays.map(day => {
-        const eventsHtml = day.events.map(ev => `
-          <div class="timeline-item relative pl-10 pb-5">
-            <div class="timeline-line">
-              <button onclick="toggleEventDone('${day.id}', '${ev.id}')" title="標記完成" class="absolute left-1.5 top-1 w-6 h-6 rounded-full border-2 flex items-center justify-center z-10 transition ${
-                ev.done
-                  ? 'bg-emerald-500 border-emerald-500 text-white'
-                  : 'bg-white border-indigoTokyo-600 text-transparent hover:border-indigoTokyo-800'
-              }">
-                <i class="fa-solid fa-check text-[11px]"></i>
-              </button>
-            </div>
-
-            <div class="p-3.5 sm:p-4 rounded-xl border transition ${
-              ev.done
-                ? 'bg-slate-50/80 border-slate-200 opacity-75'
-                : 'bg-white border-slate-200/90 hover:border-indigo-200 shadow-2xs'
-            }">
-              <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                <div class="flex flex-wrap items-center gap-2">
-                  <span class="px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-800 font-bold text-xs">${escapeHtml(ev.time)}</span>
-                  <span class="px-2 py-0.5 rounded-md border text-[11px] font-semibold ${getTagStyle(ev.tag)}">${escapeHtml(ev.tag)}</span>
-                </div>
-                <button onclick="deleteEvent('${day.id}', '${ev.id}')" title="刪除此行程" class="text-slate-300 hover:text-rose-500 transition p-1">
-                  <i class="fa-solid fa-trash-can text-xs"></i>
-                </button>
-              </div>
-
-              <h4 class="font-bold text-slate-900 text-sm sm:text-base ${ev.done ? 'line-through text-slate-500' : ''}">
-                ${escapeHtml(ev.title)}
-              </h4>
-
-              ${ev.transit ? `
-                <div class="mt-2.5 p-2.5 sm:p-3 rounded-xl bg-sky-50/80 border border-sky-200/80 text-xs text-slate-700 space-y-1">
-                  <div class="font-bold text-sky-900 flex items-center gap-1.5">
-                    <i class="fa-solid fa-route text-sky-600"></i>
-                    <span>交通方式與轉乘指引</span>
-                  </div>
-                  <div class="whitespace-pre-line leading-relaxed text-slate-700">${escapeHtml(ev.transit)}</div>
-                </div>
-              ` : ''}
-
-              ${ev.note ? `<p class="text-xs text-slate-600 mt-2 whitespace-pre-line leading-relaxed">${escapeHtml(ev.note)}</p>` : ''}
-            </div>
-          </div>
-        `).join('');
-
-        // Preset route quick-add buttons for Day 3 (12/12 Free Day)
-        const presetBar = day.hasPresets ? `
-          <div class="mb-4 p-3 rounded-xl bg-indigo-50/70 border border-indigo-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-            <div class="text-xs text-indigoTokyo-900 font-medium">
-              <i class="fa-solid fa-wand-magic-sparkles text-indigoTokyo-600 mr-1"></i>
-              <strong>12/12 自由日靈感：</strong>一鍵套用推薦路線（含幡ヶ谷出發交通）
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <button onclick="applyDay3Route('A')" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigoTokyo-700 hover:text-white text-indigoTokyo-800 border border-indigo-200 text-xs font-semibold transition">
-                + 路線A：中目黑 & 代官山散步
-              </button>
-              <button onclick="applyDay3Route('B')" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigoTokyo-700 hover:text-white text-indigoTokyo-800 border border-indigo-200 text-xs font-semibold transition">
-                + 路線B：淺草 & 麻布台之丘夜景
-              </button>
-            </div>
-          </div>
-        ` : '';
-
-        return `
-          <article class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-            <!-- Day Header -->
-            <div class="bg-slate-50/90 border-b border-slate-200/80 px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="px-2.5 py-0.5 rounded-lg bg-indigoTokyo-700 text-white text-xs font-bold">${day.dateLabel}</span>
-                  <h3 class="font-bold text-slate-900 text-base sm:text-lg">${day.dayTitle}</h3>
-                </div>
-                <p class="text-xs text-slate-500 mt-1">${day.subtitle}</p>
-              </div>
-              <button onclick="openAddEventModal('${day.id}')" class="self-start sm:self-center text-xs font-semibold text-indigoTokyo-700 hover:bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-200 transition">
-                + 新增這天行程
-              </button>
-            </div>
-
-            <!-- Timeline Body -->
-            <div class="p-4 sm:p-6">
-              ${presetBar}
-
-              <!-- Start Accommodation Node -->
-              ${day.startFromHotel ? `
-                <div class="mb-4 inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-xl bg-sakura-50 border border-sakura-100 text-xs text-sakura-800 font-medium">
-                  <i class="fa-solid fa-building-user text-sakura-600"></i>
-                  <span>出發自住宿：<strong>${escapeHtml(shortHotelName)}</strong></span>
-                  <span class="text-sakura-600/80 hidden sm:inline">(${escapeHtml(shortAddress)})</span>
-                </div>
-              ` : ''}
-
-              <div class="mt-1">
-                ${eventsHtml}
-              </div>
-
-              <!-- End Accommodation Node -->
-              ${day.endAtHotel ? `
-                <div class="mt-1 inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-700 font-medium">
-                  <i class="fa-solid fa-bed text-indigoTokyo-600"></i>
-                  <span>返回住宿休息：<strong>${escapeHtml(shortHotelName)}</strong></span>
-                  <span class="text-slate-500 hidden sm:inline">• 京王新線「幡ヶ谷駅」北口步行6分</span>
-                </div>
-              ` : ''}
-            </div>
-          </article>
-        `;
-      }).join('');
-    }
-
-    function toggleEventDone(dayId, eventId) {
-      const day = appState.days.find(d => d.id === dayId);
-      if (!day) return;
-      const ev = day.events.find(e => e.id === eventId);
-      if (ev) {
-        ev.done = !ev.done;
-        saveState();
-        renderItinerary();
-      }
-    }
-
-    function deleteEvent(dayId, eventId) {
-      const day = appState.days.find(d => d.id === dayId);
-      if (!day) return;
-      day.events = day.events.filter(e => e.id !== eventId);
-      saveState();
-      renderItinerary();
-      showToast('已刪除該行程項目');
-    }
-
-    function applyDay3Route(route) {
-      const day3 = appState.days.find(d => d.id === 'day3');
-      if (!day3) return;
-
-      if (route === 'A') {
-        day3.events.push(
-          {
-            id: 'e3-' + Date.now() + '-1',
-            time: '11:00',
-            title: '中目黑星巴克臻選東京烘焙工坊 & 目黑川沿線選物',
-            tag: '自由推薦',
-            transit: '從幡ヶ谷搭京王巴士【渋66】至「渋谷駅」（25分，¥230），轉乘東急東橫線 2 站至「中目黑駅」（4分，¥140）步行 10 分鐘。',
-            note: '全球唯六的星巴克旗艦烘焙工坊，周邊巷弄聚集許多日系服飾與生活選物小店。',
-            done: false
-          },
-          {
-            id: 'e3-' + Date.now() + '-2',
-            time: '14:30',
-            title: '代官山 T-SITE 蔦屋書店 & 質感咖啡下午茶',
-            tag: '自由推薦',
-            transit: '從中目黑沿目黑川坡道步行約 10 分鐘即達代官山 T-SITE；回程可散步至澀谷搭京王巴士【渋66】直達幡ヶ谷。',
-            note: '感受東京最優雅的建築與設計氛圍。',
-            done: false
-          }
-        );
-        showToast('已將「路線A：中目黑 & 代官山」加入 12/12 行程！');
-      } else {
-        day3.events.push(
-          {
-            id: 'e3-' + Date.now() + '-1',
-            time: '10:30',
-            title: '淺草雷門文化散步 & 仲見世通老街小吃',
-            tag: '自由推薦',
-            transit: '從幡ヶ谷搭京王新線直通都營新宿線至「馬喰横山駅」，站內轉乘都營淺草線（東日本橋駅）直達「淺草駅」（總車程約 38 分鐘，IC 卡約 ¥430）。',
-            note: '參拜淺草寺、遠眺晴空塔，品嚐人形燒與抹茶甜點。',
-            done: false
-          },
-          {
-            id: 'e3-' + Date.now() + '-2',
-            time: '16:30',
-            title: '麻布台之丘 Azabudai Hills & 東京鐵塔夜景',
-            tag: '自由推薦',
-            transit: '從淺草搭東京地鐵銀座線至「銀座」轉日比谷線至「神谷町駅」5號出口直通（約 28 分鐘）；回程轉都營新宿線直達幡ヶ谷（約 32 分鐘）。',
-            note: '傍晚前往東京最新高樓地標，欣賞夕陽與點燈後的東京鐵塔。',
-            done: false
-          }
-        );
-        showToast('已將「路線B：淺草 & 麻布台之丘」加入 12/12 行程！');
-      }
-      saveState();
-      renderItinerary();
-    }
-
-    function openAddEventModal(preselectDayId = 'day4') {
-      document.getElementById('event-day').value = preselectDayId;
-      document.getElementById('event-time').value = '';
-      document.getElementById('event-title').value = '';
-      document.getElementById('event-transit').value = '';
-      document.getElementById('event-note').value = '';
-      document.getElementById('event-modal').classList.remove('hidden');
-    }
-
-    function closeAddEventModal() {
-      document.getElementById('event-modal').classList.add('hidden');
-    }
-
-    function saveNewEvent(e) {
-      e.preventDefault();
-      const dayId = document.getElementById('event-day').value;
-      const time = document.getElementById('event-time').value.trim();
-      const title = document.getElementById('event-title').value.trim();
-      const tag = document.getElementById('event-tag').value;
-      const transit = document.getElementById('event-transit').value.trim();
-      const note = document.getElementById('event-note').value.trim();
-
-      if (!time || !title) return;
-
-      const day = appState.days.find(d => d.id === dayId);
-      if (day) {
-        day.events.push({
-          id: 'ev-' + Date.now(),
-          time,
-          title,
-          tag,
-          transit,
-          note,
-          done: false
-        });
-        saveState();
-        renderItinerary();
-        closeAddEventModal();
-        showToast(`已新增行程至 ${day.dateLabel}`);
-      }
     }
 
     // ==================== TRENDING SPOTS RENDERING & ACTIONS ====================
     function filterTrending(cat) {
       selectedTrendingFilter = cat;
       document.querySelectorAll('.trend-filter').forEach(btn => {
-        if (btn.dataset.cat === cat) {
-          btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
-          btn.classList.add('bg-slate-900', 'text-white');
-        } else {
-          btn.classList.remove('bg-slate-900', 'text-white');
-          btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
-        }
+        const isActive = btn.dataset.cat === cat;
+        btn.className = isActive
+          ? 'trend-filter active px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 text-white transition'
+          : 'trend-filter px-3 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition';
       });
       renderTrendingSpots();
     }
 
     function renderTrendingSpots() {
       const grid = document.getElementById('trending-grid');
-      const items = selectedTrendingFilter === 'all'
+      if (!grid) return;
+
+      const list = selectedTrendingFilter === 'all'
         ? TRENDING_SPOTS
         : TRENDING_SPOTS.filter(s => s.category === selectedTrendingFilter);
 
-      grid.innerHTML = items.map(spot => `
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between hover:border-indigo-300 transition">
-          <div class="space-y-3">
+      grid.innerHTML = list.map(spot => `
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 hover:border-sakura-300 shadow-2xs transition flex flex-col justify-between gap-4">
+          <div class="space-y-2.5">
             <div class="flex items-center justify-between gap-2">
-              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-sakura-50 text-sakura-600 border border-sakura-100">${spot.badge}</span>
-              <span class="text-xs text-slate-400 font-medium">${spot.category}</span>
+              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-sakura-50 text-sakura-600 border border-sakura-100">${escapeHtml(spot.badge)}</span>
+              <span class="text-[11px] font-medium text-slate-500">${escapeHtml(spot.area)}</span>
             </div>
-
-            <div>
-              <h3 class="font-bold text-slate-900 text-base leading-snug">${spot.name}</h3>
-              <div class="text-xs text-indigoTokyo-700 font-medium mt-1 flex items-center gap-1">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>${spot.area}</span>
-              </div>
+            <h3 class="font-bold text-slate-900 text-base">${escapeHtml(spot.name)}</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">${escapeHtml(spot.desc)}</p>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 font-medium">
+              ${escapeHtml(spot.highlight)}
             </div>
-
-            <p class="text-xs text-slate-600 leading-relaxed">${spot.desc}</p>
-
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700">
-              <i class="fa-solid fa-star text-amber-400 mr-1"></i>${spot.highlight}
-            </div>
-
             <div class="p-2.5 rounded-xl bg-sky-50/80 border border-sky-100 text-xs text-slate-700 leading-relaxed">
-              <div class="font-bold text-sky-900 mb-0.5 flex items-center gap-1">
-                <i class="fa-solid fa-train-subway text-sky-600"></i>
-                <span>從幡ヶ谷出發交通：</span>
-              </div>
-              <span>${spot.transitFromHotel}</span>
+              <strong class="text-sky-800"><i class="fa-solid fa-train-subway mr-1"></i>幡ヶ谷出發交通：</strong>${escapeHtml(spot.transitFromHotel)}
             </div>
           </div>
 
-          <div class="pt-4 mt-4 border-t border-slate-100 flex items-center gap-2">
-            <button onclick="addTrendingToDay('${spot.id}', 'day4')" class="flex-1 py-2 px-3 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-xs font-semibold transition flex items-center justify-center gap-1">
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <select id="trend-day-select-${spot.id}" class="px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs bg-white text-slate-700 font-medium focus:outline-none">
+              <option value="day4" selected>12/13 個人採購日</option>
+              <option value="day3">12/12 自由日</option>
+              <option value="day1">12/10 Day 1</option>
+              <option value="day5">12/14 Day 5</option>
+            </select>
+            <button onclick="addTrendingToItinerary('${spot.id}')" class="px-3.5 py-1.5 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs">
               <i class="fa-solid fa-plus"></i>
-              <span>加入 12/13 採購日</span>
-            </button>
-            <button onclick="addTrendingToDay('${spot.id}', 'day3')" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
-              + 12/12
+              <span>加入行程</span>
             </button>
           </div>
         </div>
       `).join('');
     }
 
-    function addTrendingToDay(spotId, targetDayId) {
+    function addTrendingToItinerary(spotId) {
       const spot = TRENDING_SPOTS.find(s => s.id === spotId);
+      const selectEl = document.getElementById(`trend-day-select-${spotId}`);
+      if (!spot || !selectEl) return;
+
+      const targetDayId = selectEl.value;
       const day = appState.days.find(d => d.id === targetDayId);
-      if (!spot || !day) return;
+      if (!day) return;
 
       day.events.push({
-        id: 'tr-ev-' + Date.now(),
-        time: spot.suggestedTime,
-        title: `${spot.name} (${spot.area})`,
+        id: 'trend-ev-' + Date.now(),
+        time: spot.suggestedTime || '下午',
+        title: `${spot.name}（${spot.area}）`,
         tag: '自由推薦',
         transit: spot.transitFromHotel,
-        note: `${spot.highlight} — ${spot.desc}`,
+        note: `${spot.highlight}\n${spot.desc}`,
         done: false
       });
 
       saveState();
       renderItinerary();
+      triggerAutoSync(`加入熱門地標：${spot.name.split('「')[0]}`);
       showToast(`已將「${spot.name.split('「')[0]}」與交通資訊加入 ${day.dateLabel} 行程！`);
     }
 
     // ==================== SHOPPING LIST RENDERING & ACTIONS ====================
-    function renderShopping() {
-      const items = appState.shopping;
-      const totalCount = items.length;
-      const boughtCount = items.filter(i => i.bought).length;
-      const pct = totalCount === 0 ? 0 : Math.round((boughtCount / totalCount) * 100);
-
-      const totalJpy = items.reduce((sum, i) => sum + (Number(i.price) || 0), 0);
-      const remainingJpy = items.filter(i => !i.bought).reduce((sum, i) => sum + (Number(i.price) || 0), 0);
-      const totalTwd = Math.round(totalJpy * 0.215);
-
-      // Update Header Badge & Top Stats
-      document.getElementById('shopping-badge').textContent = `${boughtCount}/${totalCount}`;
-      document.getElementById('shop-progress-text').textContent = `${boughtCount} / ${totalCount} 件`;
-      document.getElementById('shop-progress-pct').textContent = `${pct}%`;
-      document.getElementById('shop-progress-bar').style.width = `${pct}%`;
-
-      document.getElementById('shop-total-jpy').textContent = `¥${totalJpy.toLocaleString()}`;
-      document.getElementById('shop-total-twd').textContent = `NT$${totalTwd.toLocaleString()}`;
-      document.getElementById('shop-remaining-jpy').textContent = `尚未購買預估金額：¥${remainingJpy.toLocaleString()}`;
-
-      // Group by category
-      const categories = [
-        { key: '藥妝美妝', icon: 'fa-pills', color: 'text-emerald-600 bg-emerald-50' },
-        { key: '潮流服飾/運動', icon: 'fa-shirt', color: 'text-indigo-600 bg-indigo-50' },
-        { key: '伴手禮/零食', icon: 'fa-gift', color: 'text-amber-600 bg-amber-50' },
-        { key: '哈利波特周邊', icon: 'fa-wand-sparkles', color: 'text-purple-600 bg-purple-50' }
-      ];
-
-      const container = document.getElementById('shopping-lists-container');
-      container.innerHTML = categories.map(cat => {
-        const catItems = items.filter(i => i.category === cat.key);
-        const listHtml = catItems.length === 0
-          ? `<div class="text-xs text-slate-400 py-4 text-center">尚無此分類商品，可由上方表單新增</div>`
-          : catItems.map(item => `
-              <div class="flex items-center justify-between gap-3 p-3 rounded-xl border transition ${
-                item.bought ? 'bg-slate-50 border-slate-200/70 opacity-65' : 'bg-white border-slate-200 hover:border-indigo-200'
-              }">
-                <label class="flex items-start gap-3 cursor-pointer flex-1 min-w-0">
-                  <input type="checkbox" ${item.bought ? 'checked' : ''} onchange="toggleShoppingItem('${item.id}')" class="mt-1 w-4 h-4 rounded text-indigoTokyo-700 focus:ring-indigoTokyo-600 cursor-pointer" />
-                  <div class="min-w-0 flex-1">
-                    <div class="font-semibold text-sm text-slate-900 truncate ${item.bought ? 'line-through text-slate-500' : ''}">${escapeHtml(item.name)}</div>
-                    <div class="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-500">
-                      ${item.store ? `<span class="bg-slate-100 px-2 py-0.5 rounded text-[11px]"><i class="fa-solid fa-store mr-1 text-slate-400"></i>${escapeHtml(item.store)}</span>` : ''}
-                      ${item.price > 0 ? `<span class="font-semibold text-indigoTokyo-700">¥${Number(item.price).toLocaleString()}</span>` : ''}
-                    </div>
-                  </div>
-                </label>
-                <button onclick="deleteShoppingItem('${item.id}')" title="刪除商品" class="text-slate-300 hover:text-rose-500 transition p-1.5">
-                  <i class="fa-solid fa-trash-can text-xs"></i>
-                </button>
-              </div>
-            `).join('');
-
-        return `
-          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-3">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div class="flex items-center gap-2.5">
-                <span class="w-8 h-8 rounded-xl ${cat.color} flex items-center justify-center text-sm">
-                  <i class="fa-solid ${cat.icon}"></i>
-                </span>
-                <h3 class="font-bold text-slate-900 text-sm sm:text-base">${cat.key}</h3>
-              </div>
-              <span class="text-xs font-semibold text-slate-500">${catItems.filter(i => i.bought).length}/${catItems.length}</span>
-            </div>
-            <div class="space-y-2.5">
-              ${listHtml}
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
     function handleAddShoppingItem(e) {
       e.preventDefault();
       const name = document.getElementById('shop-name').value.trim();
       const category = document.getElementById('shop-category').value;
       const store = document.getElementById('shop-store').value.trim();
-      const price = Number(document.getElementById('shop-price').value) || 0;
+      const price = parseInt(document.getElementById('shop-price').value, 10) || 0;
 
       if (!name) return;
 
-      appState.shopping.unshift({
+      appState.shopping.push({
         id: 'shop-' + Date.now(),
         name,
         category,
-        store: store || '東京市區',
+        store,
         price,
         bought: false
       });
@@ -1980,6 +2658,7 @@
       document.getElementById('shop-name').value = '';
       document.getElementById('shop-store').value = '';
       document.getElementById('shop-price').value = '';
+      triggerAutoSync(`新增購物項目：${name}`);
       showToast(`已加入「${name}」至購物清單！`);
     }
 
@@ -1989,6 +2668,7 @@
         item.bought = !item.bought;
         saveState();
         renderShopping();
+        triggerAutoSync(`購物勾選：${item.name}`);
       }
     }
 
@@ -1996,33 +2676,102 @@
       appState.shopping = appState.shopping.filter(i => i.id !== id);
       saveState();
       renderShopping();
+      triggerAutoSync('刪除購物項目');
       showToast('已移除該商品');
     }
 
-    // ==================== UTILITIES & RESET ====================
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+    function renderShopping() {
+      const container = document.getElementById('shopping-lists-container');
+      const badge = document.getElementById('shopping-badge');
+
+      const totalItems = appState.shopping.length;
+      const boughtItems = appState.shopping.filter(i => i.bought).length;
+      const pct = totalItems === 0 ? 0 : Math.round((boughtItems / totalItems) * 100);
+
+      const totalJpy = appState.shopping.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+      const remainingJpy = appState.shopping
+        .filter(item => !item.bought)
+        .reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+      const totalTwd = Math.round(totalJpy * 0.215);
+
+      if (badge) badge.textContent = `${boughtItems}/${totalItems}`;
+
+      const progressText = document.getElementById('shop-progress-text');
+      const progressPct = document.getElementById('shop-progress-pct');
+      const progressBar = document.getElementById('shop-progress-bar');
+      const totalJpyEl = document.getElementById('shop-total-jpy');
+      const totalTwdEl = document.getElementById('shop-total-twd');
+      const remainingEl = document.getElementById('shop-remaining-jpy');
+
+      if (progressText) progressText.textContent = `${boughtItems} / ${totalItems} 件`;
+      if (progressPct) progressPct.textContent = `${pct}%`;
+      if (progressBar) progressBar.style.width = `${pct}%`;
+      if (totalJpyEl) totalJpyEl.textContent = `¥${totalJpy.toLocaleString()}`;
+      if (totalTwdEl) totalTwdEl.textContent = `NT$${totalTwd.toLocaleString()}`;
+      if (remainingEl) remainingEl.textContent = `尚未購買預算：¥${remainingJpy.toLocaleString()}`;
+
+      if (!container) return;
+
+      const categories = ['藥妝美妝', '潮流服飾/運動', '伴手禮/零食', '哈利波特周邊'];
+      const categoryIcons = {
+        '藥妝美妝': '💊',
+        '潮流服飾/運動': '👟',
+        '伴手禮/零食': '🎁',
+        '哈利波特周邊': '🪄'
+      };
+
+      container.innerHTML = categories.map(cat => {
+        const items = appState.shopping.filter(i => i.category === cat);
+        const catTotal = items.reduce((s, i) => s + (Number(i.price) || 0), 0);
+
+        const itemsHtml = items.length === 0
+          ? `<div class="text-xs text-slate-400 py-4 text-center">尚無此分類商品</div>`
+          : items.map(item => `
+            <div class="flex items-center justify-between gap-3 p-3 rounded-xl border transition ${
+              item.bought ? 'bg-slate-50 border-slate-200/70 opacity-65' : 'bg-white border-slate-200 hover:border-indigo-200'
+            }">
+              <div class="flex items-start gap-3 min-w-0">
+                <input type="checkbox" ${item.bought ? 'checked' : ''} onchange="toggleShoppingItem('${item.id}')" class="mt-1 w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0" />
+                <div class="min-w-0">
+                  <div class="text-sm font-semibold text-slate-800 truncate ${item.bought ? 'line-through text-slate-500' : ''}">${escapeHtml(item.name)}</div>
+                  ${item.store ? `<div class="text-[11px] text-slate-500 mt-0.5"><i class="fa-solid fa-store mr-1 text-slate-400"></i>${escapeHtml(item.store)}</div>` : ''}
+                </div>
+              </div>
+              <div class="flex items-center gap-2.5 shrink-0">
+                <span class="text-xs font-bold text-indigoTokyo-700 bg-indigo-50 px-2 py-1 rounded-lg">¥${(Number(item.price) || 0).toLocaleString()}</span>
+                <button onclick="deleteShoppingItem('${item.id}')" title="移除商品" class="text-slate-400 hover:text-rose-600 transition text-xs p-1">
+                  <i class="fa-regular fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+          `).join('');
+
+        return `
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+              <h3 class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                <span>${categoryIcons[cat] || '🛍️'}</span>
+                <span>${escapeHtml(cat)}</span>
+                <span class="text-xs font-normal text-slate-400">(${items.length})</span>
+              </h3>
+              <span class="text-xs font-bold text-slate-600">小計 ¥${catTotal.toLocaleString()}</span>
+            </div>
+            <div class="space-y-2">
+              ${itemsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
-    let resetPending = false;
+    // ==================== RESET DATA ====================
     function confirmResetData() {
-      if (!resetPending) {
-        resetPending = true;
-        showToast('再點擊一次「重設資料」即可恢復初始預設行程', true);
-        setTimeout(() => { resetPending = false; }, 3500);
-        return;
-      }
-      resetPending = false;
+      localStorage.removeItem(STORAGE_KEY);
       appState = JSON.parse(JSON.stringify(DEFAULT_DATA));
       saveState();
       renderAll();
-      showToast('已重設為預設行程與清單！');
+      triggerAutoSync('重置為預設行程');
+      showToast('已重置為最新預設行程、美食與購物清單！');
     }
 
     function renderAll() {
@@ -2032,6 +2781,7 @@
       renderFoods();
       renderTrendingSpots();
       renderShopping();
+      renderSheetsConfigUI();
     }
 
     // Initialize Application on Load
