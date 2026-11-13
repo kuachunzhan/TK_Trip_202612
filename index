@@ -1,0 +1,2043 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>東京六天五夜好友之旅 (12/10 - 12/15) | 互動行程規劃</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome for crisp icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+          },
+          colors: {
+            indigoTokyo: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              600: '#3949ab',
+              700: '#283593',
+              800: '#1a237e',
+              900: '#121858',
+            },
+            sakura: {
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              500: '#f43f5e',
+              600: '#e11d48',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      -webkit-tap-highlight-color: transparent;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .timeline-line::before {
+      content: '';
+      position: absolute;
+      top: 1.5rem;
+      bottom: 0;
+      left: 1.125rem;
+      width: 2px;
+      background-color: #e2e8f0;
+      z-index: 0;
+    }
+    .timeline-item:last-child .timeline-line::before {
+      display: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-medium">
+      <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+      <span id="toast-msg">已更新設定</span>
+    </div>
+  </div>
+
+  <!-- Top Header -->
+  <header class="bg-gradient-to-r from-indigoTokyo-900 via-indigoTokyo-800 to-slate-900 text-white shadow-md">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <!-- Title & Subtitle -->
+        <div>
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 text-indigo-100 text-xs font-medium mb-2 border border-white/15">
+            <span>🇯🇵 TOKYO 2026</span>
+            <span>•</span>
+            <span>好友出遊與採購全攻略</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2.5">
+            <span>東京六天五夜好友之旅</span>
+            <span class="text-sakura-100 bg-sakura-600/30 border border-sakura-400/30 text-sm sm:text-base px-3 py-0.5 rounded-full font-semibold">12/10 - 12/15</span>
+          </h1>
+        </div>
+
+        <!-- Flight Summary Badge -->
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl p-3 sm:px-4 sm:py-3 text-xs sm:text-sm flex flex-col sm:flex-row gap-2.5 sm:gap-5">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-lg bg-indigo-500/30 flex items-center justify-center text-indigo-200 shrink-0">
+              <i class="fa-solid fa-plane-departure"></i>
+            </span>
+            <div>
+              <div class="text-indigo-200 text-[11px]">去程航班 (跨夜)</div>
+              <div class="font-semibold text-white">12/9 SGN 23:30 <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-indigo-300"></i> 12/10 HND 07:25</div>
+            </div>
+          </div>
+          <div class="hidden sm:block w-px bg-white/15"></div>
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-lg bg-sakura-500/30 flex items-center justify-center text-sakura-200 shrink-0">
+              <i class="fa-solid fa-plane-arrival"></i>
+            </span>
+            <div>
+              <div class="text-indigo-200 text-[11px]">回程航班</div>
+              <div class="font-semibold text-white">12/15 HND 17:20 <i class="fa-solid fa-arrow-right text-[10px] mx-1 text-indigo-300"></i> 12/15 SGN 21:55</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Accommodation Tracker Banner -->
+      <div class="mt-4 bg-white text-slate-800 rounded-2xl p-3.5 sm:px-5 sm:py-4 shadow-sm border border-indigo-100 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-sakura-50 text-sakura-600 flex items-center justify-center shrink-0 border border-sakura-100 mt-0.5">
+            <i class="fa-solid fa-building-user text-lg"></i>
+          </div>
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-sakura-600 bg-sakura-50 px-2 py-0.5 rounded-md">住宿據點鎖定</span>
+              <span id="header-hotel-name" class="font-bold text-slate-900 text-sm sm:text-base">セレッソ幡ヶ谷 315 (Cerezo Hatagaya 315)</span>
+              <span class="text-[11px] font-medium text-indigoTokyo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                <i class="fa-solid fa-train-subway mr-1"></i>京王新線「幡ヶ谷駅」北口 步行6分
+              </span>
+            </div>
+            <p id="header-hotel-address" class="text-xs text-slate-600 font-medium">〒151-0072 東京都渋谷区幡ヶ谷2-37-16 セレッソ幡ヶ谷315</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 self-start lg:self-center shrink-0">
+          <button onclick="copyHotelAddress()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center gap-1.5">
+            <i class="fa-regular fa-copy"></i>
+            <span>複製日文地址</span>
+          </button>
+          <a id="header-hotel-map-link" href="https://www.google.com/maps/search/?api=1&query=東京都渋谷区幡ヶ谷2-37-16+セレッソ幡ヶ谷" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <span>Google Maps</span>
+          </a>
+          <button onclick="openHotelModal()" class="px-3 py-2 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>編輯</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky Navigation Tabs -->
+  <nav class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between overflow-x-auto no-scrollbar py-2 gap-2">
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <button onclick="switchTab('itinerary')" id="tab-itinerary" class="nav-tab active px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition flex items-center gap-2 bg-indigoTokyo-700 text-white shadow-xs">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>每日行程規劃</span>
+          </button>
+          <button onclick="switchTab('food')" id="tab-food" class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:bg-slate-100">
+            <i class="fa-solid fa-utensils text-amber-500"></i>
+            <span>美食清單</span>
+            <span id="food-badge" class="bg-amber-100 text-amber-800 text-[11px] px-1.5 py-0.2 rounded-full">0/9</span>
+          </button>
+          <button onclick="switchTab('trending')" id="tab-trending" class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:bg-slate-100">
+            <i class="fa-solid fa-fire text-sakura-500"></i>
+            <span>東京最新熱門推薦</span>
+          </button>
+          <button onclick="switchTab('shopping')" id="tab-shopping" class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:bg-slate-100">
+            <i class="fa-solid fa-bag-shopping text-indigo-600"></i>
+            <span>必買購物清單</span>
+            <span id="shopping-badge" class="bg-slate-200 text-slate-700 text-[11px] px-1.5 py-0.2 rounded-full">0</span>
+          </button>
+          <button onclick="switchTab('accommodation')" id="tab-accommodation" class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:bg-slate-100">
+            <i class="fa-solid fa-train-subway text-emerald-600"></i>
+            <span>住宿與全景點交通總覽</span>
+          </button>
+        </div>
+
+        <button onclick="confirmResetData()" title="重置為最新預設行程" class="px-2.5 py-2 rounded-xl text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition whitespace-nowrap flex items-center gap-1">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span class="hidden md:inline">重置為最新預設行程</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6">
+
+    <!-- ==================== TAB 1: 每日行程規劃 ==================== -->
+    <section id="view-itinerary" class="tab-view space-y-5">
+      <!-- Day Filter Pills & Quick Add -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+        <div id="day-pills" class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+          <!-- Injected by JS -->
+        </div>
+        <button onclick="openAddEventModal()" class="px-4 py-2 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-1.5 shrink-0 shadow-xs">
+          <i class="fa-solid fa-plus"></i>
+          <span>新增行程項目</span>
+        </button>
+      </div>
+
+      <!-- Days Container -->
+      <div id="itinerary-container" class="space-y-6">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB: 美食清單 ==================== -->
+    <section id="view-food" class="tab-view hidden space-y-5">
+      <!-- Top Food Route & Filter Banner -->
+      <div class="bg-gradient-to-r from-amber-50 via-white to-sakura-50 border border-amber-200/80 rounded-2xl p-5 space-y-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="inline-block text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full">🍽️ 東京必吃美食地圖</span>
+              <span id="food-visited-summary" class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">已造訪 0 / 9 間</span>
+            </div>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-900">精選 9 大餐廳與甜點清單（含幡ヶ谷出發交通）</h2>
+            <p class="text-xs sm:text-sm text-slate-600 mt-1">可依區域或造訪狀態篩選，點擊卡片右下角「+ 加入行程」即可連同交通方式排入指定日期！</p>
+          </div>
+          <button onclick="openAddFoodModal()" class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-1.5 shrink-0 shadow-xs self-start lg:self-center">
+            <i class="fa-solid fa-plus"></i>
+            <span>新增自訂美食</span>
+          </button>
+        </div>
+
+        <!-- Area & Visited Filter Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-amber-200/60">
+          <div class="flex flex-wrap gap-1.5" id="food-area-filters">
+            <button onclick="filterFoodArea('all')" data-area="all" class="food-area-btn active px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 text-white transition">全部區域</button>
+            <button onclick="filterFoodArea('銀座・築地')" data-area="銀座・築地" class="food-area-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">銀座・築地</button>
+            <button onclick="filterFoodArea('新宿・澀谷・中目黑')" data-area="新宿・澀谷・中目黑" class="food-area-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">新宿・澀谷・中目黑</button>
+            <button onclick="filterFoodArea('淺草・日本橋')" data-area="淺草・日本橋" class="food-area-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">淺草・日本橋</button>
+          </div>
+
+          <div class="flex items-center gap-1.5" id="food-status-filters">
+            <button onclick="filterFoodStatus('all')" data-status="all" class="food-status-btn active px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-amber-600 text-white transition">全部</button>
+            <button onclick="filterFoodStatus('unvisited')" data-status="unvisited" class="food-status-btn px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">尚未造訪</button>
+            <button onclick="filterFoodStatus('visited')" data-status="visited" class="food-status-btn px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">已造訪</button>
+          </div>
+        </div>
+
+        <!-- Suggested Foodie Routes -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
+          <div class="p-2.5 rounded-xl bg-white/80 border border-amber-200/70 text-slate-700">
+            <strong class="text-amber-800">🍣 順路搭配建議 A（築地・銀座線）：</strong>
+            <span>Tsumugi 築地本願寺早餐 → 築地海膽虎 → 銀座 patisserie ten 泡芙 / 銀座 篝 雞白湯拉麵</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-white/80 border border-amber-200/70 text-slate-700">
+            <strong class="text-indigoTokyo-800">🍜 順路搭配建議 B（新宿・中目黑線）：</strong>
+            <span>離住宿最近的 AFURI 辛紅 / Ramen Nagi（新宿宵夜），或中目黑逛街晚餐預約 Nou 餐酒館</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Food Cards Grid -->
+      <div id="food-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: 東京最新熱門推薦 ==================== -->
+    <section id="view-trending" class="tab-view hidden space-y-5">
+      <!-- Banner -->
+      <div class="bg-gradient-to-r from-sakura-50 via-white to-indigo-50 border border-sakura-100 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="inline-block text-xs font-bold text-sakura-600 bg-sakura-100/80 px-2.5 py-0.5 rounded-full mb-1.5">12/12 自由日 & 12/13 個人採購專屬</span>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900">東京最新話題地標與潮流採購指南</h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-1">12/13 早上朋友去跑步時，最適合一個人輕鬆逛街！點擊卡片上的「+ 加入行程」即可直接排入 12/12 或 12/13 時間軸。</p>
+        </div>
+        <div class="flex flex-wrap gap-1.5 shrink-0" id="trending-filters">
+          <button onclick="filterTrending('all')" data-cat="all" class="trend-filter active px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 text-white transition">全部推薦</button>
+          <button onclick="filterTrending('潮流選物/設計')" data-cat="潮流選物/設計" class="trend-filter px-3 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">潮流選物/設計</button>
+          <button onclick="filterTrending('百貨新地標')" data-cat="百貨新地標" class="trend-filter px-3 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">百貨新地標</button>
+          <button onclick="filterTrending('美食甜點')" data-cat="美食甜點" class="trend-filter px-3 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition">美食甜點</button>
+        </div>
+      </div>
+
+      <!-- Trending Cards Grid -->
+      <div id="trending-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: 必買購物清單 ==================== -->
+    <section id="view-shopping" class="tab-view hidden space-y-5">
+      <!-- Budget & Progress Summary -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-2xs">
+          <div class="text-xs text-slate-500 font-medium">採購清單進度</div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <span id="shop-progress-text" class="text-2xl font-bold text-slate-900">0 / 0 件</span>
+            <span id="shop-progress-pct" class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">0%</span>
+          </div>
+          <div class="w-full bg-slate-100 h-2 rounded-full mt-2.5 overflow-hidden">
+            <div id="shop-progress-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-2xs">
+          <div class="text-xs text-slate-500 font-medium">預估日幣總額 (JPY)</div>
+          <div class="mt-1 flex items-baseline gap-2">
+            <span id="shop-total-jpy" class="text-2xl font-bold text-indigoTokyo-700">¥0</span>
+            <span class="text-xs text-slate-400">含已勾選與待買</span>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-2">提醒：日本消費滿 ¥5,500 (含稅) 記得攜帶護照辦理免稅！</div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-2xs">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-500 font-medium">約合台幣預算 (TWD)</span>
+            <span class="text-[11px] text-slate-400">匯率參考 0.215</span>
+          </div>
+          <div class="mt-1 flex items-baseline gap-2">
+            <span id="shop-total-twd" class="text-2xl font-bold text-slate-900">NT$0</span>
+          </div>
+          <div id="shop-remaining-jpy" class="text-[11px] text-sakura-600 font-medium mt-2">尚未購買預算：¥0</div>
+        </div>
+      </div>
+
+      <!-- Add Shopping Item Form -->
+      <form onsubmit="handleAddShoppingItem(event)" class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-2xs space-y-3">
+        <div class="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-cart-plus text-indigoTokyo-600"></i>
+          <span>新增想買商品</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
+          <div class="lg:col-span-4">
+            <input type="text" id="shop-name" required placeholder="商品名稱 (例：合利他命、Porter包、魔杖)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600" />
+          </div>
+          <div class="lg:col-span-3">
+            <select id="shop-category" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600">
+              <option value="藥妝美妝">💊 藥妝美妝</option>
+              <option value="潮流服飾/運動">👟 潮流服飾/運動</option>
+              <option value="伴手禮/零食">🎁 伴手禮/零食</option>
+              <option value="哈利波特周邊">🪄 哈利波特周邊</option>
+            </select>
+          </div>
+          <div class="lg:col-span-3">
+            <input type="text" id="shop-store" placeholder="預計購買地點 (例：松本清、原宿)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600" />
+          </div>
+          <div class="lg:col-span-2 flex gap-2">
+            <input type="number" id="shop-price" min="0" step="100" placeholder="日幣價格 ¥" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600" />
+          </div>
+        </div>
+        <div class="flex justify-end">
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-plus"></i>
+            <span>加入購物清單</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Categorized Shopping Lists -->
+      <div id="shopping-lists-container" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: 住宿與交通備忘 ==================== -->
+    <section id="view-accommodation" class="tab-view hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column: Accommodation Card & Neighborhood Info -->
+        <div class="lg:col-span-1 space-y-5">
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-building-user text-sakura-600"></i>
+                <span>已確認住宿據點資訊</span>
+              </h2>
+              <button onclick="openHotelModal()" class="text-xs font-semibold text-indigoTokyo-700 hover:underline">修改</button>
+            </div>
+
+            <div class="p-4 rounded-xl bg-sakura-50/70 border border-sakura-100 space-y-2.5">
+              <div id="acc-card-name" class="font-bold text-slate-900 text-base">セレッソ幡ヶ谷 315 (Cerezo Hatagaya 315)</div>
+              <div id="acc-card-address" class="text-xs text-slate-700 flex items-start gap-1.5 font-medium">
+                <i class="fa-solid fa-location-dot text-sakura-500 mt-0.5"></i>
+                <span>〒151-0072 東京都渋谷区幡ヶ谷2-37-16 セレッソ幡ヶ谷315</span>
+              </div>
+              <div id="acc-card-station" class="text-xs text-indigoTokyo-800 bg-white/80 px-2.5 py-1.5 rounded-lg border border-sakura-200/60 font-medium">
+                <i class="fa-solid fa-train-subway text-indigoTokyo-600 mr-1"></i>京王新線「幡ヶ谷駅」北口 步行約 6 分鐘（另步行 9 分鐘可達京王線「笹塚駅」）
+              </div>
+              <div id="acc-card-note" class="text-xs text-slate-500 pt-1 border-t border-sakura-200/60">
+                入住日期：12/10 (四) － 退房日期：12/15 (二)，共 5 晚
+              </div>
+              <div class="pt-1 flex gap-2">
+                <button onclick="copyHotelAddress()" class="flex-1 py-2 px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                  <i class="fa-regular fa-copy"></i>
+                  <span>複製地址</span>
+                </button>
+                <a id="acc-card-map-link" href="https://www.google.com/maps/search/?api=1&query=東京都渋谷区幡ヶ谷2-37-16+セレッソ幡ヶ谷" target="_blank" rel="noopener noreferrer" class="flex-1 py-2 px-3 rounded-lg bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-diamond-turn-right"></i>
+                  <span>開啟地圖導航</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Neighborhood Convenience -->
+            <div class="space-y-2.5 pt-1">
+              <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <i class="fa-solid fa-store text-emerald-600"></i>
+                <span>幡ヶ谷周邊生活機能亮點</span>
+              </div>
+              <div class="space-y-2 text-xs text-slate-600">
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                  <strong class="text-slate-800">🛍️ 幡ヶ谷六號通商店街 (六号通り商店街)：</strong>距離公寓步行僅 2–3 分鐘，沿路有藥妝店、超市 (Life / Daiei)、居酒屋與拉麵店，宵夜採買超方便。
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                  <strong class="text-slate-800">🏃 12/13 朋友跑步推薦路線：</strong>從幡ヶ谷往東南慢跑約 <strong>2.5 km</strong> 即可直達<strong>代代木公園 (Yoyogi Park)</strong>，綠蔭跑道平坦寬敞，跑完還能順路在原宿/代代木公園周邊喝咖啡！
+                </div>
+                <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/70 text-amber-900">
+                  <strong>⚠️ 新宿轉乘小提醒：</strong>從新宿回住宿時，請務必前往<strong>「京王新線 (Keio New Line)」</strong>月台（與都營新宿線直通），一般京王線特急/準特急<strong>不停靠幡ヶ谷駅</strong>！
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Flight Details Card -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-3">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-ticket text-indigoTokyo-600"></i>
+              <span>航班與機場接駁備忘</span>
+            </h3>
+            <div class="space-y-3 text-xs">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+                <div class="flex justify-between font-bold text-indigoTokyo-800 mb-1">
+                  <span>去程航班 (跨夜紅眼班機)</span>
+                  <span>12/9 (三) → 12/10 (四)</span>
+                </div>
+                <div class="text-slate-700 font-medium">23:30 胡志明市 (SGN) → 07:25 東京羽田 (HND)</div>
+                <div class="text-slate-500 mt-1">機場→幡ヶ谷：搭京急線至品川轉山手線至新宿，再轉京王新線 2 站即達（約 55–60 分鐘，¥720）。</div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+                <div class="flex justify-between font-bold text-sakura-600 mb-1">
+                  <span>回程航班</span>
+                  <span>12/15 (二)</span>
+                </div>
+                <div class="text-slate-700 font-medium">17:20 東京羽田 (HND) → 21:55 胡志明市 (SGN)</div>
+                <div class="text-slate-500 mt-1">建議 13:30 前從幡ヶ谷出發，最晚 14:45 抵達羽田機場第 3 航廈辦理退稅與報到。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Key Destination Transit Guide -->
+        <div class="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-slate-900">從「セレッソ幡ヶ谷315」出發：全景點精確交通對照表</h2>
+              <p class="text-xs text-slate-500 mt-0.5">包含乘車路線、轉乘站點、預估車程與 IC 卡票價參考</p>
+            </div>
+            <span class="text-xs font-semibold text-indigoTokyo-700 bg-indigo-50 px-3 py-1 rounded-full self-start sm:self-center">起點：幡ヶ谷駅 (KO03)</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Transit 1 -->
+            <div class="p-4 rounded-xl border border-slate-200 hover:border-indigo-300 transition space-y-2 bg-slate-50/40">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-sky-100 text-sky-800">12/10 & 12/15 羽田機場 (HND)</span>
+                <span class="text-xs font-bold text-slate-700">55–60 分 / 約 ¥720</span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-sm">羽田機場第3航廈 ⇄ 幡ヶ谷駅</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                • <strong>電車推薦：</strong>羽田第3航廈搭【京急空港線快特】至「品川」→ 轉【JR山手線】至「新宿」→ 轉<strong>【京王新線】</strong>2站（3分鐘）至「幡ヶ谷駅」北口步行6分。<br/>
+                • <strong>大件行李備案：</strong>搭利木津巴士至「新宿駅西口」（約40分，¥1,400），再轉京王新線 1 站至幡ヶ谷（¥140）。
+              </p>
+            </div>
+
+            <!-- Transit 2 -->
+            <div class="p-4 rounded-xl border border-slate-200 hover:border-indigo-300 transition space-y-2 bg-slate-50/40">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800">12/10 18:00 Salome 2007</span>
+                <span class="text-xs font-bold text-slate-700">20–25 分 / ¥230–285</span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-sm">幡ヶ谷 ⇄ 澀谷周邊 (Salome 2007)</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                • <strong>路線 1（巴士直達，超省力）：</strong>於甲州街道「幡ヶ谷」公車站搭【京王巴士 渋66】直達「渋谷駅」（約25分，¥230），免走新宿站內轉乘迷宮。<br/>
+                • <strong>路線 2（電車）：</strong>幡ヶ谷搭【京王新線】至新宿（3分）轉【JR山手線/埼京線】至渋谷（5分，總計約20分，¥285）。
+              </p>
+            </div>
+
+            <!-- Transit 3 -->
+            <div class="p-4 rounded-xl border border-slate-200 hover:border-indigo-300 transition space-y-2 bg-slate-50/40">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800">12/11 早上 朝霧高爾夫俱樂部</span>
+                <span class="text-xs font-bold text-slate-700">自駕約 1小時40分–2小時</span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-sm">朝霧カントリークラブ (靜岡富士宮市)</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                • <strong>自駕/包車路線（無俱樂部接駁車）：</strong>幡ヶ谷上【首都高速4號新宿線】接【中央自動車道】往河口湖方向 → 下「河口湖 IC」接國道139號往富士宮方向 → 於「道の駅 なるさわ」前紅綠燈左轉富士宮成澤線即達（約 129 km）。建議 <strong>06:00 前</strong>出發。<br/>
+                • <strong>大眾運輸備案：</strong>東海道新幹線至「新富士駅」轉計程車約 50 分鐘（約 ¥9,500）。
+              </p>
+            </div>
+
+            <!-- Transit 4 -->
+            <div class="p-4 rounded-xl border border-slate-200 hover:border-indigo-300 transition space-y-2 bg-slate-50/40">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-800">12/14 哈利波特影城</span>
+                <span class="text-xs font-bold text-slate-700">約 35 分 / IC 約 ¥420</span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-sm">東京華納兄弟哈利波特影城 (豐島園)</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                • <strong>超順路直達路線：</strong>從「幡ヶ谷駅」搭【京王新線】至「新宿駅」（3分鐘），出站依指標轉乘【都營大江戶線】直達終點站「豊島園駅」（20分鐘），出站步行約 2–4 分鐘即達魔法大門！
+              </p>
+            </div>
+
+            <!-- Transit 5 -->
+            <div class="p-4 rounded-xl border border-slate-200 hover:border-indigo-300 transition space-y-2 bg-slate-50/40">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-sakura-100 text-sakura-800">12/13 採購：原宿 & 澀谷</span>
+                <span class="text-xs font-bold text-slate-700">18–25 分 / ¥100–285</span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-sm">原宿 HARAKADO / 澀谷 PARCO & 宮下公園</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                • <strong>前往原宿 HARAKADO：</strong>京王新線至新宿轉 JR 山手線至「原宿駅」（18分，¥285），或於「六号通り」搭社區巴士【ハチ公バス 春の小川ルート】直達「原宿駅入口」（22分，僅 ¥100）。<br/>
+                • <strong>前往澀谷 PARCO：</strong>搭京王巴士【渋66】直達渋谷駅（25分，¥230），逛完原宿沿明治通散步至澀谷僅 15 分鐘。
+              </p>
+            </div>
+
+            <!-- Transit 6 -->
+            <div class="p-4 rounded-xl border border-slate-200 hover:border-indigo-300 transition space-y-2 bg-slate-50/40">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800">12/12 & 12/13：麻布台之丘 / 下北澤</span>
+                <span class="text-xs font-bold text-slate-700">15–32 分 / 步行可達下北澤</span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-sm">麻布台之丘 & 下北澤 Reload 交通</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                • <strong>麻布台之丘：</strong>京王新線直通都營新宿線至「新宿三丁目」轉副都心線/日比谷線至「神谷町駅」5號出口直通（約 32 分，IC 約 ¥380）。<br/>
+                • <strong>下北澤 Reload：</strong>距離住宿僅約 1.5 km，天氣好推薦直接步行 18–20 分鐘散步前往，或從笹塚轉京王井之頭線（約 15 分）。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL: EDIT ACCOMMODATION ==================== -->
+  <div id="hotel-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl border border-slate-100 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-hotel text-sakura-600"></i>
+          <span>編輯東京住宿地點</span>
+        </h3>
+        <button onclick="closeHotelModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form onsubmit="saveHotelInfo(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">住宿名稱 *</label>
+          <input type="text" id="input-hotel-name" required placeholder="例如：セレッソ幡ヶ谷 315 (Cerezo Hatagaya 315)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">詳細日文地址</label>
+          <input type="text" id="input-hotel-address" placeholder="例如：〒151-0072 東京都渋谷区幡ヶ谷2-37-16 セレッソ幡ヶ谷315" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">最近車站與出口</label>
+          <input type="text" id="input-hotel-station" placeholder="例如：京王新線「幡ヶ谷駅」北口 步行約 6 分鐘" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">住宿備註 (Check-in 時間 / 房號密碼)</label>
+          <input type="text" id="input-hotel-note" placeholder="例如：入住日期：12/10 (四) － 退房日期：12/15 (二)，共 5 晚" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600" />
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeHotelModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50">取消</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-sm font-semibold shadow-xs">儲存標註</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ADD ITINERARY EVENT ==================== -->
+  <div id="event-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl border border-slate-100 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-calendar-plus text-indigoTokyo-600"></i>
+          <span>新增行程活動</span>
+        </h3>
+        <button onclick="closeAddEventModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form onsubmit="saveNewEvent(event)" class="space-y-3.5">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">選擇日期 *</label>
+            <select id="event-day" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600">
+              <option value="day1">12/10 (四) Day 1</option>
+              <option value="day2">12/11 (五) Day 2</option>
+              <option value="day3">12/12 (六) Day 3</option>
+              <option value="day4" selected>12/13 (日) Day 4</option>
+              <option value="day5">12/14 (一) Day 5</option>
+              <option value="day6">12/15 (二) Day 6</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">時間標註 *</label>
+            <input type="text" id="event-time" required placeholder="例如：15:30 或 晚上" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">行程名稱 / 地點 *</label>
+          <input type="text" id="event-title" required placeholder="例如：表參道藍瓶咖啡 & 逛街" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">類別標籤</label>
+          <select id="event-tag" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600">
+            <option value="自由推薦">自由推薦</option>
+            <option value="既定行程">既定行程</option>
+            <option value="美食餐廳">美食餐廳</option>
+            <option value="交通/航班">交通/航班</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">交通方式與轉乘資訊 (選填)</label>
+          <input type="text" id="event-transit" placeholder="例如：京王新線至新宿轉JR山手線（約20分，¥285）" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">備註說明</label>
+          <textarea id="event-note" rows="2" placeholder="預約資訊、必吃美食或想逛的品牌..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600"></textarea>
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeAddEventModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50">取消</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-sm font-semibold shadow-xs">加入時間軸</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ADD CUSTOM FOOD ==================== -->
+  <div id="food-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl border border-slate-100 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-utensils text-amber-500"></i>
+          <span>新增自訂美食餐廳</span>
+        </h3>
+        <button onclick="closeAddFoodModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form onsubmit="saveNewFood(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">餐廳 / 甜點名稱 *</label>
+          <input type="text" id="food-input-name" required placeholder="例如：敘敘苑燒肉 新宿小田急百貨店" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">所屬區域 *</label>
+            <select id="food-input-area" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="新宿・澀谷・中目黑">新宿・澀谷・中目黑</option>
+              <option value="銀座・築地">銀座・築地</option>
+              <option value="淺草・日本橋">淺草・日本橋</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">預計價位</label>
+            <input type="text" id="food-input-price" placeholder="例如：¥2,000 - ¥4,000" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">預約建議</label>
+            <select id="food-input-reservation" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+              <option value="建議提前預約">建議提前預約</option>
+              <option value="現場排隊（無預約）">現場排隊（無預約）</option>
+              <option value="可現場候位或預約">可現場候位或預約</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">建議造訪時段</label>
+            <input type="text" id="food-input-time" placeholder="例如：12:00 或 19:00" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">招牌必點與特色 *</label>
+          <input type="text" id="food-input-signature" required placeholder="例如：午間牛舌燒肉套餐、壺漬牛肋排" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">地址或地圖搜尋關鍵字</label>
+          <input type="text" id="food-input-address" placeholder="例如：東京都新宿區西新宿1-1-3" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">從幡ヶ谷出發交通資訊</label>
+          <input type="text" id="food-input-transit" placeholder="例如：京王新線幡ヶ谷駅直達新宿駅步行3分鐘（約10分）" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeAddFoodModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50">取消</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-xs">新增至美食清單</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript Application Logic -->
+  <script>
+    // ==================== DEFAULT INITIAL DATA ====================
+    const STORAGE_KEY = 'tokyo_trip_2026_hatagaya_v3';
+
+    const DEFAULT_DATA = {
+      hotel: {
+        name: 'セレッソ幡ヶ谷 315 (Cerezo Hatagaya 315)',
+        address: '〒151-0072 東京都渋谷区幡ヶ谷2-37-16 セレッソ幡ヶ谷315',
+        station: '京王新線「幡ヶ谷駅」北口 步行約 6 分鐘（另步行 9 分鐘可達京王線「笹塚駅」）',
+        note: '入住日期：12/10 (四) － 退房日期：12/15 (二)，共 5 晚'
+      },
+      days: [
+        {
+          id: 'day1',
+          dateLabel: '12/10 (四)',
+          dayTitle: 'Day 1 • 抵達東京幡ヶ谷 & Salome 2007 聚會',
+          subtitle: '12/9 23:30 SGN 起飛 → 12/10 07:25 抵達羽田機場 (HND)',
+          startFromHotel: false,
+          endAtHotel: true,
+          events: [
+            {
+              id: 'e1-1',
+              time: '07:25',
+              title: '抵達東京羽田機場 (HND) → 前往「セレッソ幡ヶ谷 315」寄放行李',
+              tag: '交通/航班',
+              transit: '【電車推薦】羽田機場第3航廈搭「京急空港線快特」至品川 → 轉「JR山手線」至新宿 → 轉「京王新線」(注意非京王線主線月台) 2站(3分鐘)至「幡ヶ谷駅」北口步行6分（總車程約 55–60 分鐘，IC 卡約 ¥720）。\n【大件行李備案】搭利木津巴士至「新宿駅西口」（約40分，¥1,400），再轉京王新線 1 站至幡ヶ谷（3分，¥140）。',
+              note: '辦理入境、領取網卡/儲值 Suica 後前往住宿處先放行李（六號通商店街周邊有投幣式寄物櫃或依房東指示寄放）。',
+              done: false
+            },
+            {
+              id: 'e1-2',
+              time: '下午',
+              title: '幡ヶ谷六號通商店街午餐 & 新宿/澀谷輕鬆暖身散步',
+              tag: '自由推薦',
+              transit: '從幡ヶ谷駅搭京王新線 2 站即達新宿（3分鐘，¥140），或搭京王巴士【渋66】直達澀谷（25分鐘，¥230）。',
+              note: '紅眼班機抵達首日保留體力，15:00 後可先回セレッソ幡ヶ谷 315 辦理入住稍作梳洗。',
+              done: false
+            },
+            {
+              id: 'e1-3',
+              time: '18:00',
+              title: '【既定行程】Salome 2007（澀谷周邊）',
+              tag: '既定行程',
+              transit: '【路線1 巴士直達超省力】於甲州街道「幡ヶ谷」公車站搭乘【京王巴士 渋66】直達「渋谷駅」（約 25 分鐘，¥230），免走新宿站內轉乘迷宮。\n【路線2 電車】幡ヶ谷駅搭「京王新線」至新宿（3分）轉「JR山手線/埼京線/湘南新宿線」至渋谷（5分），總計約 20 分鐘，IC 卡約 ¥285。',
+              note: '重要既定聚會行程！建議 17:15 左右從住宿出發。',
+              done: false
+            }
+          ]
+        },
+        {
+          id: 'day2',
+          dateLabel: '12/11 (五)',
+          dayTitle: 'Day 2 • 朝霧高爾夫俱樂部揮桿日',
+          subtitle: '遠眺富士山揮桿體驗（靜岡縣富士宮市）',
+          startFromHotel: true,
+          endAtHotel: true,
+          events: [
+            {
+              id: 'e2-1',
+              time: '06:00 出發',
+              title: '【既定行程】早上打球 – 朝霧高爾夫俱樂部 (朝霧カントリークラブ)',
+              tag: '既定行程',
+              transit: '【自駕/包車路線（無俱樂部接駁巴士）】從幡ヶ谷上「首都高速4號新宿線」（永福或幡ヶ谷入口）接「中央自動車道」往河口湖方向 → 下「河口湖 IC」後接國道 139 號線往富士宮方向 → 於「道の駅 なるさわ」前方紅綠燈左轉富士宮成澤線即達。車程約 1 小時 40 分～2 小時（約 129 km），建議 06:00 前從住宿出發。\n【大眾運輸備案】東海道新幹線至「新富士駅」後轉計程車約 50 分鐘（車資約 ¥9,000–¥10,000）。',
+              note: '球場地址：靜岡縣富士宮市根原字宝山380。12月中旬朝霧高原氣溫較低（約 0°C - 8°C），請務必攜帶防風保暖衣物與手套！',
+              done: false
+            },
+            {
+              id: 'e2-2',
+              time: '晚上',
+              title: '返回幡ヶ谷六號通商店街或新宿 • 燒肉居酒屋慶功晚餐',
+              tag: '美食餐廳',
+              transit: '回程下首都高速幡ヶ谷出口即達住宿區，步行 3 分鐘可至六號通商店街聚餐。',
+              note: '打完球回到住宿附近輕鬆大吃一頓，超市採買隔日早餐與飲料。',
+              done: false
+            }
+          ]
+        },
+        {
+          id: 'day3',
+          dateLabel: '12/12 (六)',
+          dayTitle: 'Day 3 • 東京自由探索日',
+          subtitle: '從幡ヶ谷出發，彈性選擇質感街區或經典地標路線',
+          startFromHotel: true,
+          endAtHotel: true,
+          hasPresets: true,
+          events: [
+            {
+              id: 'e3-1',
+              time: '全天',
+              title: '【既定行程】自由日（可一鍵套用下方推薦路線或從「熱門推薦」加入）',
+              tag: '自由推薦',
+              transit: '• 往「新宿」：京王新線 2 站直達（3 分鐘，¥140）。\n• 往「表參道 / 明治神宮前」：京王新線至新宿轉線，或於「六号通り」搭社區巴士【ハチ公バス（春の小川ルート）】直達原宿/表參道方向（單一票價 ¥100）。\n• 往「下北澤」：從住宿步行約 18 分鐘散步可達，或從笹塚轉車約 10 分鐘。',
+              note: '可依照前兩天體力自由安排，點擊上方按鈕即可快速加入推薦行程！',
+              done: false
+            }
+          ]
+        },
+        {
+          id: 'day4',
+          dateLabel: '12/13 (日)',
+          dayTitle: 'Day 4 • 朋友去跑步 / 個人最新熱門地標採購日',
+          subtitle: '朋友跑代代木公園，自己輕鬆逛最新話題商場掃貨！',
+          startFromHotel: true,
+          endAtHotel: true,
+          events: [
+            {
+              id: 'e4-1',
+              time: '早上',
+              title: '朋友去跑步（推薦：代代木公園慢跑路線）• 個人採購行程啟動',
+              tag: '既定行程',
+              transit: '【跑步路線】從セレッソ幡ヶ谷 315 往東南慢跑約 2.5 km 即達「代代木公園」，綠蔭跑道平坦寬敞（或搭京王新線轉車前往「皇居外苑」跑 5 km 經典環線）。',
+              note: '週末早晨 11:00 百貨剛開門人潮最少，最適合第一站直衝原宿表參道最新地標！',
+              done: false
+            },
+            {
+              id: 'e4-2',
+              time: '11:00',
+              title: '原宿東急廣場「HARAKADO (ハラカド)」潮流選物與香氛',
+              tag: '自由推薦',
+              transit: '從「幡ヶ谷駅」搭京王新線至新宿轉 JR 山手線至「原宿駅」（共約 18 分鐘，¥285）；或於「六号通り」搭社區巴士【ハチ公バス 春の小川ルート】直達「原宿駅入口」（約 22 分鐘，僅 ¥100）。',
+              note: '原宿神宮前交叉口鏡面新地標！集結新銳設計選物、日本獨立小眾香氛與高空露台咖啡。',
+              done: false
+            },
+            {
+              id: 'e4-3',
+              time: '14:00',
+              title: '澀谷 PARCO & 宮下公園 MIYASHITA PARK 潮牌採購',
+              tag: '自由推薦',
+              transit: '從原宿沿明治通或貓街 (Cat Street) 步行約 15 分鐘即達澀谷；回程可於渋谷駅搭【京王巴士 渋66】直達「幡ヶ谷」（約 25 分鐘，¥230），拎大包小包不用擠電車！',
+              note: 'Human Made、PORTER、日系設計師品牌與 6F 任天堂/寶可夢旗艦店一次逛齊，記得帶護照辦理退稅。',
+              done: false
+            }
+          ]
+        },
+        {
+          id: 'day5',
+          dateLabel: '12/14 (一)',
+          dayTitle: 'Day 5 • 哈利波特影城魔法之旅',
+          subtitle: '從幡ヶ谷轉大江戶線 35 分鐘直達霍格華茲片場！',
+          startFromHotel: true,
+          endAtHotel: true,
+          events: [
+            {
+              id: 'e5-1',
+              time: '白天',
+              title: '【既定行程】東京華納兄弟哈利波特影城 (練馬區春日町1-1-7)',
+              tag: '既定行程',
+              transit: '【超順路路線】從「幡ヶ谷駅」搭【京王新線】至「新宿駅」（3 分鐘），出站轉乘【都營大江戶線】直達終點站「豊島園駅」（20 分鐘），出站步行約 2–4 分鐘即達。總車程約 35 分鐘，IC 卡約 ¥420。',
+              note: '建議預留 4 - 5 小時深度參觀！必拍 9¾ 月台、大禮堂、斜角巷，別忘了喝奶油啤酒並逛全球最大哈利波特周邊商店。',
+              done: false
+            },
+            {
+              id: 'e5-2',
+              time: '晚上',
+              title: '新宿思出橫丁 / 東急歌舞伎町塔晚餐 & 藥妝補貨',
+              tag: '美食餐廳',
+              transit: '從豊島園駅搭都營大江戶線直達「新宿駅」（20 分鐘），餐後搭京王新線 2 站（3 分鐘）輕鬆回幡ヶ谷。',
+              note: '回住宿前可在新宿西口或幡ヶ谷六號通藥妝店補齊清單商品。',
+              done: false
+            }
+          ]
+        },
+        {
+          id: 'day6',
+          dateLabel: '12/15 (二)',
+          dayTitle: 'Day 6 • 退房前往羽田機場 & 滿載而歸',
+          subtitle: '17:20 東京羽田 (HND) 起飛 → 21:55 抵達胡志明市 (SGN)',
+          startFromHotel: true,
+          endAtHotel: false,
+          events: [
+            {
+              id: 'e6-1',
+              time: '上午',
+              title: 'セレッソ幡ヶ谷 315 退房整理行李 & 最後補貨',
+              tag: '自由推薦',
+              transit: '退房後可將行李寄放於新宿駅大型置物櫃或利木津巴士站，輕鬆逛街吃午餐。',
+              note: '檢查護照、免稅單據與液體類戰利品是否已妥善裝入托運行李箱。',
+              done: false
+            },
+            {
+              id: 'e6-2',
+              time: '13:30 出發',
+              title: '從幡ヶ谷前往東京羽田機場 (HND) 第3航廈（預計 14:30 抵達）',
+              tag: '交通/航班',
+              transit: '【電車】幡ヶ谷駅搭「京王新線」至新宿 → 轉「JR山手線」至品川 → 轉「京急空港線快特」至羽田機場第3航廈（約 55–60 分鐘，¥720）。\n【巴士】京王新線至新宿駅西口轉乘利木津巴士直達羽田第3航廈（巴士約 40 分鐘，¥1,400），免搬戰利品上下月台！',
+              note: '建議最晚 14:45 抵達羽田機場第3航廈辦理登機託運、海關退稅與免稅店伴手禮採購。',
+              done: false
+            },
+            {
+              id: 'e6-3',
+              time: '17:20',
+              title: '搭乘航班返回胡志明市 (預計 21:55 抵達 SGN)',
+              tag: '交通/航班',
+              transit: 'Tokyo Haneda (HND) T3 → Ho Chi Minh City (SGN)',
+              note: '平安返家，結束愉快的東京六天五夜好友之旅！',
+              done: false
+            }
+          ]
+        }
+      ],
+      shopping: [
+        { id: 's1', name: '合利他命 EX Plus / EVE 止痛藥', category: '藥妝美妝', store: '幡ヶ谷六號通藥妝 / 新宿松本清', price: 6500, bought: false },
+        { id: 's2', name: '日本小眾香氛 / 護手霜 (SHIRO 或 Tamburins)', category: '藥妝美妝', store: '原宿 HARAKADO / 表參道', price: 8800, bought: false },
+        { id: 's3', name: 'PORTER TOKYO 經典托特包 / 隨身包', category: '潮流服飾/運動', store: '澀谷 PARCO / 表參道旗艦店', price: 28000, bought: false },
+        { id: 's4', name: '日系機能運動服飾 / 限定球鞋', category: '潮流服飾/運動', store: '原宿 / 澀谷宮下公園', price: 19000, bought: false },
+        { id: 's5', name: 'NY Perfect Cheese 起司奶油脆餅禮盒', category: '伴手禮/零食', store: '新宿京王百貨 / 羽田機場免稅店', price: 2500, bought: false },
+        { id: 's6', name: '哈利波特學院長袍 / 專屬魔杖 / 柏蒂全口味豆', category: '哈利波特周邊', store: '豐島園哈利波特影城商店', price: 13000, bought: false }
+      ],
+      foods: [
+        {
+          id: 'food-1',
+          name: '1. Nou',
+          jpName: 'Nou（ノウ）• 創意法式餐酒館與自然酒',
+          area: '新宿・澀谷・中目黑',
+          address: '東京都目黑區東山1-9-11 2F',
+          signature: '季節創意法式小料理、招牌鴨肉料理、自然酒 Pairing',
+          priceRange: '¥6,000 - ¥10,000',
+          reservation: '建議提前線上預約',
+          suggestedTime: '19:00',
+          transit: '京王新線「幡ヶ谷駅」→ 新宿轉乘 JR 山手線至澀谷 → 轉東急田園都市線至「池尻大橋駅」東口步行約 7 分鐘（或從澀谷搭計程車約 7 分鐘，總車程約 25 分鐘）。',
+          visited: false
+        },
+        {
+          id: 'food-2',
+          name: '2. 江戶富士',
+          jpName: '江戸富士 • 日本橋浮誇海鮮丼名店',
+          area: '淺草・日本橋',
+          address: '東京都中央區日本橋本石町1-1-9 新常盤橋ビル B1F',
+          signature: '上海鮮丼（堆成小山的生魚片、海膽、鮭魚卵與厚切玉子燒）',
+          priceRange: '¥2,200 - ¥3,800',
+          reservation: '現場排隊（建議 11:00 開門前抵達）',
+          suggestedTime: '11:30',
+          transit: '京王新線「幡ヶ谷駅」→ 新宿轉乘都營新宿線至「小川町駅」步行約 6 分鐘，或轉東京 Metro 銀座線至「三越前駅」步行約 5 分鐘（總車程約 30 分鐘）。',
+          visited: false
+        },
+        {
+          id: 'food-3',
+          name: '3. patisserie ten 銀座 泡芙',
+          jpName: 'パティスリー テン（patisserie ten）• 銀座法式甜點',
+          area: '銀座・築地',
+          address: '東京都中央區銀座（銀座區域法式甜點專門店）',
+          signature: '現灌香草卡士達脆皮泡芙（シュークリーム）、精緻法式塔類',
+          priceRange: '¥600 - ¥1,500',
+          reservation: '外帶免預約（熱門口味午後易售完）',
+          suggestedTime: '15:00',
+          transit: '京王新線「幡ヶ谷駅」→ 新宿三丁目轉乘東京 Metro 丸之內線至「銀座駅」步行約 5 分鐘（總車程約 28 分鐘）。',
+          visited: false
+        },
+        {
+          id: 'food-4',
+          name: '4. Bacon & Eggs 淺草',
+          jpName: 'Bacon & Eggs Asakusa • 美式早午餐專門店',
+          area: '淺草・日本橋',
+          address: '東京都台東區淺草',
+          signature: '厚切培根煎蛋早午餐盤、美式厚鬆餅、酥脆可頌三明治',
+          priceRange: '¥1,500 - ¥2,500',
+          reservation: '現場候位（週末早晨人氣高）',
+          suggestedTime: '09:30',
+          transit: '京王新線「幡ヶ谷駅」→ 新宿轉乘都營新宿線至「馬喰橫山駅」，站內轉都營淺草線至「淺草駅」步行約 5 分鐘（總車程約 38 分鐘）。',
+          visited: false
+        },
+        {
+          id: 'food-5',
+          name: '5. 築地海膽虎',
+          jpName: '築地うに虎 喰（Tsukiji Unitora）• 海膽蓋飯名店',
+          area: '銀座・築地',
+          address: '東京都中央區築地4-10-5 カネシン水産ビル 1F',
+          signature: '五種國產海膽比較蓋飯（国産うに食べ比べ丼）、海膽鮪魚中腹丼',
+          priceRange: '¥4,500 - ¥9,800',
+          reservation: '現場排隊（早上 08:30–10:30 較好排）',
+          suggestedTime: '10:30',
+          transit: '京王新線「幡ヶ谷駅」→ 新宿轉乘都營大江戶線直達「築地市場駅」A1 出口步行約 4 分鐘（總車程約 32 分鐘）。',
+          visited: false
+        },
+        {
+          id: 'food-6',
+          name: '6. Tsumugi 築地本願寺',
+          jpName: '築地本願寺カフェ Tsumugi • 18品項和風朝食',
+          area: '銀座・築地',
+          address: '東京都中央區築地3-15-1 築地本願寺インフォメーションセンター棟',
+          signature: '數量限定「18品目の朝ごはん（18品項精緻日式早餐）」、日本茶飲',
+          priceRange: '¥2,200 - ¥2,800',
+          reservation: '強烈建議提前官網預約早餐時段',
+          suggestedTime: '08:30',
+          transit: '都營大江戶線「築地市場駅」步行約 5 分鐘，或東京 Metro 日比谷線「築地駅」1 號出口直達（從幡ヶ谷出發約 32 分鐘）。',
+          visited: false
+        },
+        {
+          id: 'food-7',
+          name: '7. AFURI 辛紅',
+          jpName: 'AFURI 辛紅（新宿サブナード / 池袋）• 旨辛柚子辣拉麵',
+          area: '新宿・澀谷・中目黑',
+          address: '東京都新宿區歌舞伎町1 新宿サブナード B1F',
+          signature: '柚子辛紅拉麵（可自選 0 丁目至 28 丁目辣度，推薦 2–4 丁目入門）',
+          priceRange: '¥1,200 - ¥1,700',
+          reservation: '現場食券排隊（翻桌率快）',
+          suggestedTime: '18:30',
+          transit: '京王新線「幡ヶ谷駅」2 站直達「新宿駅」，步行經地下街 Subnade 約 4 分鐘即達（車程僅 10 分鐘，離住宿最近超順路！）。',
+          visited: false
+        },
+        {
+          id: 'food-8',
+          name: '8. 銀座 篝',
+          jpName: '銀座 篝 本店（Ginza Kagari）• 米其林必比登雞白湯',
+          area: '銀座・築地',
+          address: '東京都中央區銀座6-4-12 1F',
+          signature: '招牌鶏白湯 Soba（宛如法式濃湯般絲滑醇厚）、松露雞白湯 Soba',
+          priceRange: '¥1,800 - ¥2,600',
+          reservation: '現場排隊（建議避開 12:00–13:30 尖峰）',
+          suggestedTime: '14:00',
+          transit: '京王新線「幡ヶ谷駅」→ 新宿三丁目轉東京 Metro 丸之內線至「銀座駅」B7 出口步行約 3 分鐘（總車程約 28 分鐘）。',
+          visited: false
+        },
+        {
+          id: 'food-9',
+          name: '9. Ramen Nagi',
+          jpName: 'すごい煮干ラーメン凪（新宿ゴールデン街店本館 / 澀谷東口店）',
+          area: '新宿・澀谷・中目黑',
+          address: '東京都新宿區歌舞伎町1-1-10-2F（新宿黃金街本館）',
+          signature: '超濃厚小魚乾（すごい煮干）拉麵、寬扁一反木綿麵條、辛銀醬',
+          priceRange: '¥1,100 - ¥1,600',
+          reservation: '現場食券排隊（新宿黃金街本館 24 小時營業，宵夜首選）',
+          suggestedTime: '21:00',
+          transit: '京王新線「幡ヶ谷駅」直達「新宿駅」東口步行約 6 分鐘（車程約 12 分鐘），或於甲州街道搭京王巴士【渋66】直達澀谷東口店。',
+          visited: false
+        }
+      ]
+    };
+
+    // Curated Trending Spots for 12/12 & 12/13 with Hatagaya Transit Details
+    const TRENDING_SPOTS = [
+      {
+        id: 'tr1',
+        name: '原宿東急廣場「HARAKADO (ハラカド)」',
+        area: '原宿 • 神宮前交叉口',
+        category: '潮流選物/設計',
+        badge: '超人氣新地標',
+        desc: '表參道與明治通交叉口的鏡面建築新地標！集結超過 70 間設計選物、日本獨立香氛、潮流雜誌圖書館與高空露台咖啡，超適合一個人慢慢挖寶。',
+        highlight: '必逛：小眾香氛、設計師雜貨、6F 美食廣場與空中花園',
+        transitFromHotel: '幡ヶ谷搭京王新線至新宿轉 JR 山手線至「原宿駅」（約 18 分鐘，¥285），或於「六号通り」搭社區巴士【ハチ公バス 春の小川ルート】直達「原宿駅入口」（約 22 分鐘，¥100）。',
+        suggestedTime: '11:00'
+      },
+      {
+        id: 'tr2',
+        name: '麻布台之丘 Azabudai Hills',
+        area: '六本木 / 神谷町',
+        category: '百貨新地標',
+        badge: '東京最高地標',
+        desc: '日本第一高摩天大樓複合設施，綠意建築與現代藝術完美融合。擁有 teamLab Borderless 美術館、精品旗艦店與超人氣排隊甜點，近距離仰望東京鐵塔。',
+        highlight: '必逛：% Arabica 咖啡、Échiré 艾許奶油甜點、森JP塔觀景空間',
+        transitFromHotel: '幡ヶ谷搭京王新線直通都營新宿線至「新宿三丁目」轉東京地鐵副都心線/日比谷線至「神谷町駅」5號出口直通（總車程約 32 分鐘，IC 卡約 ¥380）。',
+        suggestedTime: '14:00'
+      },
+      {
+        id: 'tr3',
+        name: '澀谷 PARCO & 宮下公園 MIYASHITA PARK',
+        area: '澀谷站步行 5 分',
+        category: '潮流選物/設計',
+        badge: '潮牌採購聖地',
+        desc: '東京潮流文化心臟地帶！PARCO 聚集 Human Made、Comme des Garçons 等一線潮牌與 6F 任天堂/寶可夢中心；宮下公園則有 KITH、Louis Vuitton 男裝旗艦店。',
+        highlight: '必逛：2F-4F 日系設計師服飾、6F 遊戲動漫專區、屋頂公園',
+        transitFromHotel: '於甲州街道「幡ヶ谷」公車站搭【京王巴士 渋66】直達「渋谷駅」（約 25 分鐘，¥230），回程提滿戰利品搭巴士直達住宿門口最省力！',
+        suggestedTime: '14:00'
+      },
+      {
+        id: 'tr4',
+        name: '下北澤 Reload & Mikan 下北',
+        area: '下北澤（距住宿僅 1.5 km）',
+        category: '潮流選物/設計',
+        badge: '步行可達文青街區',
+        desc: '全新打造的白色開放式街區「Reload」與高架下商場「Mikan 下北」，集結獨立眼鏡品牌、立飲咖啡、選物店與質感古著，氛圍悠閒不擁擠。',
+        highlight: '必逛：OGAWA COFFEE LABORATORY、獨立選物與古著小店',
+        transitFromHotel: '距離セレッソ幡ヶ谷 315 僅約 1.5 km，天氣好推薦直接步行 18–20 分鐘散步前往；或從「笹塚駅」轉京王井之頭線（明大前轉乘，約 15 分鐘）。',
+        suggestedTime: '15:00'
+      },
+      {
+        id: 'tr5',
+        name: '銀座 GINZA SIX & 伊東屋文具旗艦店',
+        area: '銀座中央通',
+        category: '百貨新地標',
+        badge: '質感精品與美妝',
+        desc: '銀座最具代表性的頂級商場，匯集各大美妝香氛旗艦專櫃、蔦屋書店藝術選書與屋頂花園；順道走訪 12 層樓高的銀座伊東屋 (Itoya) 採買精緻文具禮品。',
+        highlight: '必逛：B1 伴手禮美食街、6F 銀座蔦屋書店、伊東屋文具',
+        transitFromHotel: '幡ヶ谷搭京王新線直通都營新宿線至「新宿三丁目」轉東京地鐵丸之內線直達「銀座駅」（總車程約 26 分鐘，IC 卡約 ¥350）。',
+        suggestedTime: '14:00'
+      },
+      {
+        id: 'tr6',
+        name: 'I’m donut ? & TruffleBAKERY 排隊名店巡禮',
+        area: '中目黑 / 澀谷 / 表參道',
+        category: '美食甜點',
+        badge: '社群爆紅美食',
+        desc: '東京目前討論度最高的生甜甜圈專賣店「I’m donut ?」入口即化，搭配木村拓哉也愛吃的「TruffleBAKERY」白松露鹽奶油捲，逛街補充熱量首選！',
+        highlight: '必點：開心果生甜甜圈、招牌白松露鹽麵包',
+        transitFromHotel: '搭京王巴士【渋66】至「渋谷駅」（25分，¥230），出站步行 3 分鐘即達宮益坂 I’m donut ? 澀谷店，可順路接續表參道逛街。',
+        suggestedTime: '12:30'
+      }
+    ];
+
+    // ==================== STATE MANAGEMENT ====================
+    let appState = loadState();
+    let selectedDayFilter = 'all';
+    let selectedTrendingFilter = 'all';
+    let selectedFoodArea = 'all';
+    let selectedFoodStatus = 'all';
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (!parsed.foods) {
+            parsed.foods = JSON.parse(JSON.stringify(DEFAULT_DATA.foods));
+          }
+          return parsed;
+        }
+      } catch (e) {
+        console.error('Failed to load state from localStorage', e);
+      }
+      return JSON.parse(JSON.stringify(DEFAULT_DATA));
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.error('Failed to save state', e);
+      }
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      const iconEl = document.getElementById('toast-icon');
+      msgEl.textContent = message;
+      iconEl.className = isError
+        ? 'fa-solid fa-circle-exclamation text-rose-400'
+        : 'fa-solid fa-circle-check text-emerald-400';
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2600);
+    }
+
+    // ==================== NAVIGATION TABS ====================
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`view-${tabName}`).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.remove('bg-indigoTokyo-700', 'text-white', 'shadow-xs');
+        btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+      });
+
+      const activeBtn = document.getElementById(`tab-${tabName}`);
+      activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+      activeBtn.classList.add('bg-indigoTokyo-700', 'text-white', 'shadow-xs');
+    }
+
+    // ==================== FOOD LIST RENDERING & ACTIONS ====================
+    function filterFoodArea(area) {
+      selectedFoodArea = area;
+      document.querySelectorAll('.food-area-btn').forEach(btn => {
+        if (btn.dataset.area === area) {
+          btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
+          btn.classList.add('bg-slate-900', 'text-white');
+        } else {
+          btn.classList.remove('bg-slate-900', 'text-white');
+          btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
+        }
+      });
+      renderFoods();
+    }
+
+    function filterFoodStatus(status) {
+      selectedFoodStatus = status;
+      document.querySelectorAll('.food-status-btn').forEach(btn => {
+        if (btn.dataset.status === status) {
+          btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
+          btn.classList.add('bg-amber-600', 'text-white');
+        } else {
+          btn.classList.remove('bg-amber-600', 'text-white');
+          btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
+        }
+      });
+      renderFoods();
+    }
+
+    function renderFoods() {
+      const foods = appState.foods || [];
+      const totalCount = foods.length;
+      const visitedCount = foods.filter(f => f.visited).length;
+
+      const foodBadge = document.getElementById('food-badge');
+      if (foodBadge) foodBadge.textContent = `${visitedCount}/${totalCount}`;
+
+      const visitedSummary = document.getElementById('food-visited-summary');
+      if (visitedSummary) visitedSummary.textContent = `已造訪 ${visitedCount} / ${totalCount} 間`;
+
+      let filtered = foods;
+      if (selectedFoodArea !== 'all') {
+        filtered = filtered.filter(f => f.area === selectedFoodArea);
+      }
+      if (selectedFoodStatus === 'visited') {
+        filtered = filtered.filter(f => f.visited);
+      } else if (selectedFoodStatus === 'unvisited') {
+        filtered = filtered.filter(f => !f.visited);
+      }
+
+      const grid = document.getElementById('food-grid');
+      if (!grid) return;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-8 text-center text-sm text-slate-500">
+            目前篩選條件下沒有符合的美食餐廳，可切換篩選條件或點擊右上角「+ 新增自訂美食」。
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(food => {
+        const mapQuery = encodeURIComponent(`${food.address || ''} ${food.jpName || food.name}`.trim());
+        const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+        const needRes = food.reservation && food.reservation.includes('預約');
+
+        return `
+          <div class="bg-white rounded-2xl border p-5 shadow-2xs flex flex-col justify-between transition ${
+            food.visited ? 'border-emerald-200 bg-emerald-50/20' : 'border-slate-200 hover:border-amber-300'
+          }">
+            <div class="space-y-3">
+              <!-- Top Badges & Visited Toggle -->
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">${escapeHtml(food.area)}</span>
+                <div class="flex items-center gap-2">
+                  <button onclick="toggleFoodVisited('${food.id}')" class="px-2.5 py-1 rounded-lg text-xs font-semibold border transition flex items-center gap-1 ${
+                    food.visited
+                      ? 'bg-emerald-600 text-white border-emerald-600'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
+                  }">
+                    <i class="fa-solid ${food.visited ? 'fa-circle-check' : 'fa-circle'} text-[11px]"></i>
+                    <span>${food.visited ? '已造訪' : '標記造訪'}</span>
+                  </button>
+                  <button onclick="deleteFoodItem('${food.id}')" title="刪除此餐廳" class="text-slate-300 hover:text-rose-500 transition p-1">
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Name & Japanese Subtitle -->
+              <div>
+                <h3 class="font-bold text-slate-900 text-base leading-snug ${food.visited ? 'text-slate-600' : ''}">${escapeHtml(food.name)}</h3>
+                ${food.jpName ? `<div class="text-xs text-slate-500 font-medium mt-0.5">${escapeHtml(food.jpName)}</div>` : ''}
+                ${food.address ? `
+                  <div class="text-[11px] text-slate-500 mt-1 flex items-start gap-1">
+                    <i class="fa-solid fa-location-dot text-sakura-500 mt-0.5"></i>
+                    <span>${escapeHtml(food.address)}</span>
+                  </div>
+                ` : ''}
+              </div>
+
+              <!-- Signature Dish -->
+              <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-100 text-xs text-slate-800">
+                <span class="font-bold text-amber-900"><i class="fa-solid fa-award text-amber-500 mr-1"></i>招牌必點：</span>
+                <span>${escapeHtml(food.signature)}</span>
+              </div>
+
+              <!-- Price & Reservation Pills -->
+              <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
+                ${food.priceRange ? `
+                  <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-semibold">
+                    <i class="fa-solid fa-yen-sign text-slate-400 mr-0.5"></i>${escapeHtml(food.priceRange)}
+                  </span>
+                ` : ''}
+                ${food.reservation ? `
+                  <span class="px-2 py-0.5 rounded-md font-semibold border ${
+                    needRes
+                      ? 'bg-rose-50 text-rose-700 border-rose-200'
+                      : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  }">
+                    <i class="fa-regular fa-clock mr-1"></i>${escapeHtml(food.reservation)}
+                  </span>
+                ` : ''}
+              </div>
+
+              <!-- Transit from Hatagaya -->
+              ${food.transit ? `
+                <div class="p-2.5 rounded-xl bg-sky-50/80 border border-sky-100 text-xs text-slate-700 leading-relaxed">
+                  <div class="font-bold text-sky-900 mb-0.5 flex items-center gap-1">
+                    <i class="fa-solid fa-train-subway text-sky-600"></i>
+                    <span>從幡ヶ谷出發交通：</span>
+                  </div>
+                  <span>${escapeHtml(food.transit)}</span>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Action Footer: Google Maps + Add to Specific Day -->
+            <div class="pt-3.5 mt-4 border-t border-slate-100 space-y-2">
+              <div class="flex items-center gap-2">
+                <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center justify-center gap-1 shrink-0">
+                  <i class="fa-solid fa-map-location-dot text-emerald-600"></i>
+                  <span>地圖</span>
+                </a>
+                <select id="food-day-select-${food.id}" class="flex-1 min-w-0 px-2.5 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600">
+                  <option value="day1">12/10 (四) Day 1</option>
+                  <option value="day2">12/11 (五) Day 2</option>
+                  <option value="day3" selected>12/12 (六) 自由日</option>
+                  <option value="day4">12/13 (日) 採購日</option>
+                  <option value="day5">12/14 (一) Day 5</option>
+                  <option value="day6">12/15 (二) Day 6</option>
+                </select>
+                <button onclick="addFoodToSelectedDay('${food.id}')" class="px-3 py-2 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-xs font-semibold transition flex items-center justify-center gap-1 shrink-0">
+                  <i class="fa-solid fa-plus"></i>
+                  <span>加入行程</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleFoodVisited(foodId) {
+      const food = appState.foods.find(f => f.id === foodId);
+      if (food) {
+        food.visited = !food.visited;
+        saveState();
+        renderFoods();
+        showToast(food.visited ? `已標記「${food.name}」為已造訪！` : `已取消「${food.name}」造訪標記`);
+      }
+    }
+
+    function deleteFoodItem(foodId) {
+      appState.foods = appState.foods.filter(f => f.id !== foodId);
+      saveState();
+      renderFoods();
+      showToast('已從美食清單移除該餐廳');
+    }
+
+    function addFoodToSelectedDay(foodId) {
+      const food = appState.foods.find(f => f.id === foodId);
+      const selectEl = document.getElementById(`food-day-select-${foodId}`);
+      if (!food || !selectEl) return;
+
+      const targetDayId = selectEl.value;
+      const day = appState.days.find(d => d.id === targetDayId);
+      if (!day) return;
+
+      const cleanTitle = food.name.replace(/^\d+\.\s*/, '');
+      const noteParts = [
+        food.jpName ? `店名資訊：${food.jpName}` : '',
+        food.address ? `地址：${food.address}` : '',
+        food.signature ? `招牌必點：${food.signature}` : '',
+        food.priceRange ? `預計價位：${food.priceRange}` : '',
+        food.reservation ? `預約提醒：${food.reservation}` : ''
+      ].filter(Boolean).join('\n');
+
+      day.events.push({
+        id: 'food-ev-' + Date.now(),
+        time: food.suggestedTime || '用餐時段',
+        title: `🍽️ ${cleanTitle}（${food.area}）`,
+        tag: '美食餐廳',
+        transit: food.transit || '',
+        note: noteParts,
+        done: false
+      });
+
+      saveState();
+      renderItinerary();
+      showToast(`已將「${cleanTitle}」與交通資訊加入 ${day.dateLabel} 行程！`);
+    }
+
+    function openAddFoodModal() {
+      document.getElementById('food-input-name').value = '';
+      document.getElementById('food-input-price').value = '';
+      document.getElementById('food-input-time').value = '12:30';
+      document.getElementById('food-input-signature').value = '';
+      document.getElementById('food-input-address').value = '';
+      document.getElementById('food-input-transit').value = '';
+      document.getElementById('food-modal').classList.remove('hidden');
+    }
+
+    function closeAddFoodModal() {
+      document.getElementById('food-modal').classList.add('hidden');
+    }
+
+    function saveNewFood(e) {
+      e.preventDefault();
+      const name = document.getElementById('food-input-name').value.trim();
+      const area = document.getElementById('food-input-area').value;
+      const priceRange = document.getElementById('food-input-price').value.trim();
+      const reservation = document.getElementById('food-input-reservation').value;
+      const suggestedTime = document.getElementById('food-input-time').value.trim();
+      const signature = document.getElementById('food-input-signature').value.trim();
+      const address = document.getElementById('food-input-address').value.trim();
+      const transit = document.getElementById('food-input-transit').value.trim();
+
+      if (!name || !signature) return;
+
+      const nextNum = (appState.foods ? appState.foods.length : 0) + 1;
+      appState.foods.push({
+        id: 'food-' + Date.now(),
+        name: `${nextNum}. ${name}`,
+        jpName: '',
+        area,
+        address,
+        signature,
+        priceRange: priceRange || '依現場菜單',
+        reservation,
+        suggestedTime: suggestedTime || '12:30',
+        transit,
+        visited: false
+      });
+
+      saveState();
+      renderFoods();
+      closeAddFoodModal();
+      showToast(`已將「${name}」加入美食清單！`);
+    }
+
+    // ==================== ACCOMMODATION FUNCTIONS ====================
+    function renderHotelInfo() {
+      const { name, address, station, note } = appState.hotel;
+      const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || name)}`;
+
+      document.getElementById('header-hotel-name').textContent = name;
+      document.getElementById('header-hotel-address').textContent = address || '尚未填寫地址';
+      const headerMapLink = document.getElementById('header-hotel-map-link');
+      if (headerMapLink) headerMapLink.href = mapUrl;
+
+      document.getElementById('acc-card-name').textContent = name;
+      document.getElementById('acc-card-address').innerHTML = `<i class="fa-solid fa-location-dot text-sakura-500 mt-0.5"></i><span>${escapeHtml(address || '尚未填寫具體地址')}</span>`;
+      const stationEl = document.getElementById('acc-card-station');
+      if (stationEl) {
+        stationEl.innerHTML = `<i class="fa-solid fa-train-subway text-indigoTokyo-600 mr-1"></i>${escapeHtml(station || '京王新線「幡ヶ谷駅」北口 步行約 6 分鐘')}`;
+      }
+      document.getElementById('acc-card-note').textContent = note || '入住日期：12/10 (四) － 退房日期：12/15 (二)，共 5 晚';
+      const cardMapLink = document.getElementById('acc-card-map-link');
+      if (cardMapLink) cardMapLink.href = mapUrl;
+
+      const shortName = name.split('(')[0].trim();
+      document.querySelectorAll('.sync-hotel-short').forEach(el => {
+        el.textContent = shortName;
+      });
+    }
+
+    function copyHotelAddress() {
+      const textToCopy = `${appState.hotel.address} (${appState.hotel.name})`;
+      const tempInput = document.createElement('textarea');
+      tempInput.value = textToCopy;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast('已複製日文地址，可直接貼上叫車或導航！');
+      } catch (err) {
+        showToast('複製失敗，請手動選取複製', true);
+      }
+      document.body.removeChild(tempInput);
+    }
+
+    function openHotelModal() {
+      document.getElementById('input-hotel-name').value = appState.hotel.name;
+      document.getElementById('input-hotel-address').value = appState.hotel.address;
+      document.getElementById('input-hotel-station').value = appState.hotel.station || '京王新線「幡ヶ谷駅」北口 步行約 6 分鐘';
+      document.getElementById('input-hotel-note').value = appState.hotel.note || '';
+      document.getElementById('hotel-modal').classList.remove('hidden');
+    }
+
+    function closeHotelModal() {
+      document.getElementById('hotel-modal').classList.add('hidden');
+    }
+
+    function saveHotelInfo(e) {
+      e.preventDefault();
+      const nameVal = document.getElementById('input-hotel-name').value.trim();
+      const addrVal = document.getElementById('input-hotel-address').value.trim();
+      const stationVal = document.getElementById('input-hotel-station').value.trim();
+      const noteVal = document.getElementById('input-hotel-note').value.trim();
+
+      if (!nameVal) return;
+
+      appState.hotel = {
+        name: nameVal,
+        address: addrVal || '〒151-0072 東京都渋谷区幡ヶ谷2-37-16 セレッソ幡ヶ谷315',
+        station: stationVal || '京王新線「幡ヶ谷駅」北口 步行約 6 分鐘',
+        note: noteVal || '入住日期：12/10 (四) － 退房日期：12/15 (二)，共 5 晚'
+      };
+      saveState();
+      renderHotelInfo();
+      renderItinerary();
+      closeHotelModal();
+      showToast('已更新並標註住宿地點！');
+    }
+
+    function quickSetHotel(name, address) {
+      appState.hotel = {
+        name,
+        address,
+        note: '入住日期：12/10 (四) － 退房日期：12/15 (二)，共 5 晚'
+      };
+      saveState();
+      renderHotelInfo();
+      renderItinerary();
+      showToast(`已套用住宿區域：${name.split('(')[0].trim()}`);
+    }
+
+    // ==================== ITINERARY RENDERING & ACTIONS ====================
+    function renderDayPills() {
+      const container = document.getElementById('day-pills');
+      const pills = [
+        { id: 'all', label: '全部 6 天' },
+        ...appState.days.map(d => ({ id: d.id, label: d.dateLabel }))
+      ];
+
+      container.innerHTML = pills.map(p => {
+        const isActive = selectedDayFilter === p.id;
+        return `
+          <button onclick="selectDayFilter('${p.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+            isActive
+              ? 'bg-slate-900 text-white shadow-2xs'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          }">
+            ${p.label}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectDayFilter(dayId) {
+      selectedDayFilter = dayId;
+      renderDayPills();
+      renderItinerary();
+    }
+
+    function getTagStyle(tag) {
+      switch (tag) {
+        case '既定行程':
+          return 'bg-indigoTokyo-100 text-indigoTokyo-800 border-indigo-200';
+        case '交通/航班':
+          return 'bg-sky-100 text-sky-800 border-sky-200';
+        case '美食餐廳':
+          return 'bg-amber-100 text-amber-800 border-amber-200';
+        default:
+          return 'bg-sakura-50 text-sakura-600 border-sakura-200';
+      }
+    }
+
+    function renderItinerary() {
+      const container = document.getElementById('itinerary-container');
+      const shortHotelName = appState.hotel.name.split('(')[0].trim();
+      const shortAddress = appState.hotel.address;
+
+      const filteredDays = selectedDayFilter === 'all'
+        ? appState.days
+        : appState.days.filter(d => d.id === selectedDayFilter);
+
+      container.innerHTML = filteredDays.map(day => {
+        const eventsHtml = day.events.map(ev => `
+          <div class="timeline-item relative pl-10 pb-5">
+            <div class="timeline-line">
+              <button onclick="toggleEventDone('${day.id}', '${ev.id}')" title="標記完成" class="absolute left-1.5 top-1 w-6 h-6 rounded-full border-2 flex items-center justify-center z-10 transition ${
+                ev.done
+                  ? 'bg-emerald-500 border-emerald-500 text-white'
+                  : 'bg-white border-indigoTokyo-600 text-transparent hover:border-indigoTokyo-800'
+              }">
+                <i class="fa-solid fa-check text-[11px]"></i>
+              </button>
+            </div>
+
+            <div class="p-3.5 sm:p-4 rounded-xl border transition ${
+              ev.done
+                ? 'bg-slate-50/80 border-slate-200 opacity-75'
+                : 'bg-white border-slate-200/90 hover:border-indigo-200 shadow-2xs'
+            }">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-800 font-bold text-xs">${escapeHtml(ev.time)}</span>
+                  <span class="px-2 py-0.5 rounded-md border text-[11px] font-semibold ${getTagStyle(ev.tag)}">${escapeHtml(ev.tag)}</span>
+                </div>
+                <button onclick="deleteEvent('${day.id}', '${ev.id}')" title="刪除此行程" class="text-slate-300 hover:text-rose-500 transition p-1">
+                  <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
+              </div>
+
+              <h4 class="font-bold text-slate-900 text-sm sm:text-base ${ev.done ? 'line-through text-slate-500' : ''}">
+                ${escapeHtml(ev.title)}
+              </h4>
+
+              ${ev.transit ? `
+                <div class="mt-2.5 p-2.5 sm:p-3 rounded-xl bg-sky-50/80 border border-sky-200/80 text-xs text-slate-700 space-y-1">
+                  <div class="font-bold text-sky-900 flex items-center gap-1.5">
+                    <i class="fa-solid fa-route text-sky-600"></i>
+                    <span>交通方式與轉乘指引</span>
+                  </div>
+                  <div class="whitespace-pre-line leading-relaxed text-slate-700">${escapeHtml(ev.transit)}</div>
+                </div>
+              ` : ''}
+
+              ${ev.note ? `<p class="text-xs text-slate-600 mt-2 whitespace-pre-line leading-relaxed">${escapeHtml(ev.note)}</p>` : ''}
+            </div>
+          </div>
+        `).join('');
+
+        // Preset route quick-add buttons for Day 3 (12/12 Free Day)
+        const presetBar = day.hasPresets ? `
+          <div class="mb-4 p-3 rounded-xl bg-indigo-50/70 border border-indigo-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div class="text-xs text-indigoTokyo-900 font-medium">
+              <i class="fa-solid fa-wand-magic-sparkles text-indigoTokyo-600 mr-1"></i>
+              <strong>12/12 自由日靈感：</strong>一鍵套用推薦路線（含幡ヶ谷出發交通）
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="applyDay3Route('A')" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigoTokyo-700 hover:text-white text-indigoTokyo-800 border border-indigo-200 text-xs font-semibold transition">
+                + 路線A：中目黑 & 代官山散步
+              </button>
+              <button onclick="applyDay3Route('B')" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigoTokyo-700 hover:text-white text-indigoTokyo-800 border border-indigo-200 text-xs font-semibold transition">
+                + 路線B：淺草 & 麻布台之丘夜景
+              </button>
+            </div>
+          </div>
+        ` : '';
+
+        return `
+          <article class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+            <!-- Day Header -->
+            <div class="bg-slate-50/90 border-b border-slate-200/80 px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-lg bg-indigoTokyo-700 text-white text-xs font-bold">${day.dateLabel}</span>
+                  <h3 class="font-bold text-slate-900 text-base sm:text-lg">${day.dayTitle}</h3>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">${day.subtitle}</p>
+              </div>
+              <button onclick="openAddEventModal('${day.id}')" class="self-start sm:self-center text-xs font-semibold text-indigoTokyo-700 hover:bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-200 transition">
+                + 新增這天行程
+              </button>
+            </div>
+
+            <!-- Timeline Body -->
+            <div class="p-4 sm:p-6">
+              ${presetBar}
+
+              <!-- Start Accommodation Node -->
+              ${day.startFromHotel ? `
+                <div class="mb-4 inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-xl bg-sakura-50 border border-sakura-100 text-xs text-sakura-800 font-medium">
+                  <i class="fa-solid fa-building-user text-sakura-600"></i>
+                  <span>出發自住宿：<strong>${escapeHtml(shortHotelName)}</strong></span>
+                  <span class="text-sakura-600/80 hidden sm:inline">(${escapeHtml(shortAddress)})</span>
+                </div>
+              ` : ''}
+
+              <div class="mt-1">
+                ${eventsHtml}
+              </div>
+
+              <!-- End Accommodation Node -->
+              ${day.endAtHotel ? `
+                <div class="mt-1 inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-700 font-medium">
+                  <i class="fa-solid fa-bed text-indigoTokyo-600"></i>
+                  <span>返回住宿休息：<strong>${escapeHtml(shortHotelName)}</strong></span>
+                  <span class="text-slate-500 hidden sm:inline">• 京王新線「幡ヶ谷駅」北口步行6分</span>
+                </div>
+              ` : ''}
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function toggleEventDone(dayId, eventId) {
+      const day = appState.days.find(d => d.id === dayId);
+      if (!day) return;
+      const ev = day.events.find(e => e.id === eventId);
+      if (ev) {
+        ev.done = !ev.done;
+        saveState();
+        renderItinerary();
+      }
+    }
+
+    function deleteEvent(dayId, eventId) {
+      const day = appState.days.find(d => d.id === dayId);
+      if (!day) return;
+      day.events = day.events.filter(e => e.id !== eventId);
+      saveState();
+      renderItinerary();
+      showToast('已刪除該行程項目');
+    }
+
+    function applyDay3Route(route) {
+      const day3 = appState.days.find(d => d.id === 'day3');
+      if (!day3) return;
+
+      if (route === 'A') {
+        day3.events.push(
+          {
+            id: 'e3-' + Date.now() + '-1',
+            time: '11:00',
+            title: '中目黑星巴克臻選東京烘焙工坊 & 目黑川沿線選物',
+            tag: '自由推薦',
+            transit: '從幡ヶ谷搭京王巴士【渋66】至「渋谷駅」（25分，¥230），轉乘東急東橫線 2 站至「中目黑駅」（4分，¥140）步行 10 分鐘。',
+            note: '全球唯六的星巴克旗艦烘焙工坊，周邊巷弄聚集許多日系服飾與生活選物小店。',
+            done: false
+          },
+          {
+            id: 'e3-' + Date.now() + '-2',
+            time: '14:30',
+            title: '代官山 T-SITE 蔦屋書店 & 質感咖啡下午茶',
+            tag: '自由推薦',
+            transit: '從中目黑沿目黑川坡道步行約 10 分鐘即達代官山 T-SITE；回程可散步至澀谷搭京王巴士【渋66】直達幡ヶ谷。',
+            note: '感受東京最優雅的建築與設計氛圍。',
+            done: false
+          }
+        );
+        showToast('已將「路線A：中目黑 & 代官山」加入 12/12 行程！');
+      } else {
+        day3.events.push(
+          {
+            id: 'e3-' + Date.now() + '-1',
+            time: '10:30',
+            title: '淺草雷門文化散步 & 仲見世通老街小吃',
+            tag: '自由推薦',
+            transit: '從幡ヶ谷搭京王新線直通都營新宿線至「馬喰横山駅」，站內轉乘都營淺草線（東日本橋駅）直達「淺草駅」（總車程約 38 分鐘，IC 卡約 ¥430）。',
+            note: '參拜淺草寺、遠眺晴空塔，品嚐人形燒與抹茶甜點。',
+            done: false
+          },
+          {
+            id: 'e3-' + Date.now() + '-2',
+            time: '16:30',
+            title: '麻布台之丘 Azabudai Hills & 東京鐵塔夜景',
+            tag: '自由推薦',
+            transit: '從淺草搭東京地鐵銀座線至「銀座」轉日比谷線至「神谷町駅」5號出口直通（約 28 分鐘）；回程轉都營新宿線直達幡ヶ谷（約 32 分鐘）。',
+            note: '傍晚前往東京最新高樓地標，欣賞夕陽與點燈後的東京鐵塔。',
+            done: false
+          }
+        );
+        showToast('已將「路線B：淺草 & 麻布台之丘」加入 12/12 行程！');
+      }
+      saveState();
+      renderItinerary();
+    }
+
+    function openAddEventModal(preselectDayId = 'day4') {
+      document.getElementById('event-day').value = preselectDayId;
+      document.getElementById('event-time').value = '';
+      document.getElementById('event-title').value = '';
+      document.getElementById('event-transit').value = '';
+      document.getElementById('event-note').value = '';
+      document.getElementById('event-modal').classList.remove('hidden');
+    }
+
+    function closeAddEventModal() {
+      document.getElementById('event-modal').classList.add('hidden');
+    }
+
+    function saveNewEvent(e) {
+      e.preventDefault();
+      const dayId = document.getElementById('event-day').value;
+      const time = document.getElementById('event-time').value.trim();
+      const title = document.getElementById('event-title').value.trim();
+      const tag = document.getElementById('event-tag').value;
+      const transit = document.getElementById('event-transit').value.trim();
+      const note = document.getElementById('event-note').value.trim();
+
+      if (!time || !title) return;
+
+      const day = appState.days.find(d => d.id === dayId);
+      if (day) {
+        day.events.push({
+          id: 'ev-' + Date.now(),
+          time,
+          title,
+          tag,
+          transit,
+          note,
+          done: false
+        });
+        saveState();
+        renderItinerary();
+        closeAddEventModal();
+        showToast(`已新增行程至 ${day.dateLabel}`);
+      }
+    }
+
+    // ==================== TRENDING SPOTS RENDERING & ACTIONS ====================
+    function filterTrending(cat) {
+      selectedTrendingFilter = cat;
+      document.querySelectorAll('.trend-filter').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
+          btn.classList.add('bg-slate-900', 'text-white');
+        } else {
+          btn.classList.remove('bg-slate-900', 'text-white');
+          btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200', 'hover:bg-slate-50');
+        }
+      });
+      renderTrendingSpots();
+    }
+
+    function renderTrendingSpots() {
+      const grid = document.getElementById('trending-grid');
+      const items = selectedTrendingFilter === 'all'
+        ? TRENDING_SPOTS
+        : TRENDING_SPOTS.filter(s => s.category === selectedTrendingFilter);
+
+      grid.innerHTML = items.map(spot => `
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs flex flex-col justify-between hover:border-indigo-300 transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-sakura-50 text-sakura-600 border border-sakura-100">${spot.badge}</span>
+              <span class="text-xs text-slate-400 font-medium">${spot.category}</span>
+            </div>
+
+            <div>
+              <h3 class="font-bold text-slate-900 text-base leading-snug">${spot.name}</h3>
+              <div class="text-xs text-indigoTokyo-700 font-medium mt-1 flex items-center gap-1">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>${spot.area}</span>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed">${spot.desc}</p>
+
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700">
+              <i class="fa-solid fa-star text-amber-400 mr-1"></i>${spot.highlight}
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-sky-50/80 border border-sky-100 text-xs text-slate-700 leading-relaxed">
+              <div class="font-bold text-sky-900 mb-0.5 flex items-center gap-1">
+                <i class="fa-solid fa-train-subway text-sky-600"></i>
+                <span>從幡ヶ谷出發交通：</span>
+              </div>
+              <span>${spot.transitFromHotel}</span>
+            </div>
+          </div>
+
+          <div class="pt-4 mt-4 border-t border-slate-100 flex items-center gap-2">
+            <button onclick="addTrendingToDay('${spot.id}', 'day4')" class="flex-1 py-2 px-3 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-xs font-semibold transition flex items-center justify-center gap-1">
+              <i class="fa-solid fa-plus"></i>
+              <span>加入 12/13 採購日</span>
+            </button>
+            <button onclick="addTrendingToDay('${spot.id}', 'day3')" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
+              + 12/12
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addTrendingToDay(spotId, targetDayId) {
+      const spot = TRENDING_SPOTS.find(s => s.id === spotId);
+      const day = appState.days.find(d => d.id === targetDayId);
+      if (!spot || !day) return;
+
+      day.events.push({
+        id: 'tr-ev-' + Date.now(),
+        time: spot.suggestedTime,
+        title: `${spot.name} (${spot.area})`,
+        tag: '自由推薦',
+        transit: spot.transitFromHotel,
+        note: `${spot.highlight} — ${spot.desc}`,
+        done: false
+      });
+
+      saveState();
+      renderItinerary();
+      showToast(`已將「${spot.name.split('「')[0]}」與交通資訊加入 ${day.dateLabel} 行程！`);
+    }
+
+    // ==================== SHOPPING LIST RENDERING & ACTIONS ====================
+    function renderShopping() {
+      const items = appState.shopping;
+      const totalCount = items.length;
+      const boughtCount = items.filter(i => i.bought).length;
+      const pct = totalCount === 0 ? 0 : Math.round((boughtCount / totalCount) * 100);
+
+      const totalJpy = items.reduce((sum, i) => sum + (Number(i.price) || 0), 0);
+      const remainingJpy = items.filter(i => !i.bought).reduce((sum, i) => sum + (Number(i.price) || 0), 0);
+      const totalTwd = Math.round(totalJpy * 0.215);
+
+      // Update Header Badge & Top Stats
+      document.getElementById('shopping-badge').textContent = `${boughtCount}/${totalCount}`;
+      document.getElementById('shop-progress-text').textContent = `${boughtCount} / ${totalCount} 件`;
+      document.getElementById('shop-progress-pct').textContent = `${pct}%`;
+      document.getElementById('shop-progress-bar').style.width = `${pct}%`;
+
+      document.getElementById('shop-total-jpy').textContent = `¥${totalJpy.toLocaleString()}`;
+      document.getElementById('shop-total-twd').textContent = `NT$${totalTwd.toLocaleString()}`;
+      document.getElementById('shop-remaining-jpy').textContent = `尚未購買預估金額：¥${remainingJpy.toLocaleString()}`;
+
+      // Group by category
+      const categories = [
+        { key: '藥妝美妝', icon: 'fa-pills', color: 'text-emerald-600 bg-emerald-50' },
+        { key: '潮流服飾/運動', icon: 'fa-shirt', color: 'text-indigo-600 bg-indigo-50' },
+        { key: '伴手禮/零食', icon: 'fa-gift', color: 'text-amber-600 bg-amber-50' },
+        { key: '哈利波特周邊', icon: 'fa-wand-sparkles', color: 'text-purple-600 bg-purple-50' }
+      ];
+
+      const container = document.getElementById('shopping-lists-container');
+      container.innerHTML = categories.map(cat => {
+        const catItems = items.filter(i => i.category === cat.key);
+        const listHtml = catItems.length === 0
+          ? `<div class="text-xs text-slate-400 py-4 text-center">尚無此分類商品，可由上方表單新增</div>`
+          : catItems.map(item => `
+              <div class="flex items-center justify-between gap-3 p-3 rounded-xl border transition ${
+                item.bought ? 'bg-slate-50 border-slate-200/70 opacity-65' : 'bg-white border-slate-200 hover:border-indigo-200'
+              }">
+                <label class="flex items-start gap-3 cursor-pointer flex-1 min-w-0">
+                  <input type="checkbox" ${item.bought ? 'checked' : ''} onchange="toggleShoppingItem('${item.id}')" class="mt-1 w-4 h-4 rounded text-indigoTokyo-700 focus:ring-indigoTokyo-600 cursor-pointer" />
+                  <div class="min-w-0 flex-1">
+                    <div class="font-semibold text-sm text-slate-900 truncate ${item.bought ? 'line-through text-slate-500' : ''}">${escapeHtml(item.name)}</div>
+                    <div class="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-500">
+                      ${item.store ? `<span class="bg-slate-100 px-2 py-0.5 rounded text-[11px]"><i class="fa-solid fa-store mr-1 text-slate-400"></i>${escapeHtml(item.store)}</span>` : ''}
+                      ${item.price > 0 ? `<span class="font-semibold text-indigoTokyo-700">¥${Number(item.price).toLocaleString()}</span>` : ''}
+                    </div>
+                  </div>
+                </label>
+                <button onclick="deleteShoppingItem('${item.id}')" title="刪除商品" class="text-slate-300 hover:text-rose-500 transition p-1.5">
+                  <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
+              </div>
+            `).join('');
+
+        return `
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-xl ${cat.color} flex items-center justify-center text-sm">
+                  <i class="fa-solid ${cat.icon}"></i>
+                </span>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">${cat.key}</h3>
+              </div>
+              <span class="text-xs font-semibold text-slate-500">${catItems.filter(i => i.bought).length}/${catItems.length}</span>
+            </div>
+            <div class="space-y-2.5">
+              ${listHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleAddShoppingItem(e) {
+      e.preventDefault();
+      const name = document.getElementById('shop-name').value.trim();
+      const category = document.getElementById('shop-category').value;
+      const store = document.getElementById('shop-store').value.trim();
+      const price = Number(document.getElementById('shop-price').value) || 0;
+
+      if (!name) return;
+
+      appState.shopping.unshift({
+        id: 'shop-' + Date.now(),
+        name,
+        category,
+        store: store || '東京市區',
+        price,
+        bought: false
+      });
+
+      saveState();
+      renderShopping();
+      document.getElementById('shop-name').value = '';
+      document.getElementById('shop-store').value = '';
+      document.getElementById('shop-price').value = '';
+      showToast(`已加入「${name}」至購物清單！`);
+    }
+
+    function toggleShoppingItem(id) {
+      const item = appState.shopping.find(i => i.id === id);
+      if (item) {
+        item.bought = !item.bought;
+        saveState();
+        renderShopping();
+      }
+    }
+
+    function deleteShoppingItem(id) {
+      appState.shopping = appState.shopping.filter(i => i.id !== id);
+      saveState();
+      renderShopping();
+      showToast('已移除該商品');
+    }
+
+    // ==================== UTILITIES & RESET ====================
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    let resetPending = false;
+    function confirmResetData() {
+      if (!resetPending) {
+        resetPending = true;
+        showToast('再點擊一次「重設資料」即可恢復初始預設行程', true);
+        setTimeout(() => { resetPending = false; }, 3500);
+        return;
+      }
+      resetPending = false;
+      appState = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      saveState();
+      renderAll();
+      showToast('已重設為預設行程與清單！');
+    }
+
+    function renderAll() {
+      renderHotelInfo();
+      renderDayPills();
+      renderItinerary();
+      renderFoods();
+      renderTrendingSpots();
+      renderShopping();
+    }
+
+    // Initialize Application on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAll();
+    });
+  </script>
+</body>
+</html>
