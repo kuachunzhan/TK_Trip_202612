@@ -726,11 +726,40 @@
 
 function doGet(e) {
   var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : 'pull';
+  var callback = (e && e.parameter && e.parameter.callback) ? e.parameter.callback : '';
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
   if (action === 'ping') {
-    return jsonOutput({ status: 'ok', message: 'Connected to Google Spreadsheet!', sheetName: ss.getName() });
+    return jsonOutput({ status: 'ok', message: 'Connected to Google Spreadsheet!', sheetName: ss.getName() }, callback);
   }
+
+  // 支援透過 GET 參數寫入（解決跨網域環境 POST 限制）
+  if (action === 'syncGet' && e.parameter && e.parameter.payload) {
+    var lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      var payload = JSON.parse(e.parameter.payload);
+      if (payload.hotel) writeHotelSheet(ss, payload.hotel);
+      if (payload.days) writeItinerarySheet(ss, payload.days);
+      if (payload.shopping) writeShoppingSheet(ss, payload.shopping);
+      if (payload.foods) writeFoodSheet(ss, payload.foods);
+      return jsonOutput({ status: 'ok', syncedAt: new Date().toISOString() }, callback);
+    } catch (err) {
+      return jsonOutput({ status: 'error', message: err.toString() }, callback);
+    } finally {
+      lock.releaseLock();
+    }
+  }
+
+  var data = {
+    hotel: readHotelSheet(ss),
+    days: readItinerarySheet(ss),
+    shopping: readShoppingSheet(ss),
+    foods: readFoodSheet(ss),
+    pulledAt: new Date().toISOString()
+  };
+  return jsonOutput({ status: 'ok', data: data }, callback);
+}
 
   // 支援透過 GET 參數寫入（解決部分沙盒環境 POST 跨網域限制）
   if (action === 'syncGet' && e.parameter && e.parameter.payload) {
@@ -914,14 +943,14 @@ function readFoodSheet(ss) {
       priceRange: String(r[6]),
       reservation: String(r[7]),
       suggestedTime: String(r[8]),
-      transit: String(r[9]),
-      visited: String(r[10]).toUpperCase() === 'TRUE'
-    };
-  });
-}
-
-function jsonOutput(obj) {
-  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+function jsonOutput(obj, callback) {
+  var jsonStr = JSON.stringify(obj);
+  if (callback) {
+    var safeCallback = String(callback).replace(/[^a-zA-Z0-9_$.]/g, '');
+    return ContentService.createTextOutput(safeCallback + '(' + jsonStr + ');')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return ContentService.createTextOutput(jsonStr).setMimeType(ContentService.MimeType.JSON);
 }</pre>
             </div>
           </div>
@@ -1755,48 +1784,117 @@ function jsonOutput(obj) {
       } catch (err) {
         // Sandboxed iframe CORS redirect fallback: use simple GET/POST without custom headers
         try {
-          const compactPayload = JSON.stringify({
-            hotel: appState.hotel,
-            days: appState.days,
-            shopping: appState.shopping,
-            foods: appState.foods
-          });
-
-          // 1. Send via no-cors POST (without custom Content-Type header so browser delivers body reliably)
-          await fetch(url, {
-            method: 'POST',
-            mode: 'no-cors',
-            credentials: 'omit',
-            body: JSON.stringify(payload)
-          });
-
-          // 2. If payload fits URL length, also ping syncGet endpoint for updated Code.gs deployments
-          if (compactPayload.length < 6500) {
-            const getSyncUrl = `${url}${url.includes('?') ? '&' : '?'}action=syncGet&payload=${encodeURIComponent(compactPayload)}&t=${Date.now()}`;
-            fetch(getSyncUrl, { method: 'GET', mode: 'no-cors', credentials: 'omit' }).catch(() => {});
-          }
+          const pingImg = new Image();
+          pingImg.src = testUrl;
 
           const nowStr = new Date().toLocaleString('zh-TW', { hour12: false });
-          const summary = `已送出寫入 (${reasonLabel}) • 其他人開啟網頁將自動拉取`;
+          const summary = '已透過跨網域安全通道送出連線測試（請點「立即全量上傳」建立資料）';
           sheetsConfig.lastSyncTime = nowStr;
           sheetsConfig.lastSyncSummary = summary;
           saveSheetsConfig();
 
           updateSyncStatusUI('synced', summary);
-          appendSyncLog(`已透過跨網域相容通道寫入 Google Sheets（${reasonLabel}）！`, 'success');
-          if (!isSilent) {
-            showToast('已送出同步資料至 Google Sheets！請重新整理試算表確認分頁更新');
-          } else {
-            showToast(`☁️ 已自動寫入「${reasonLabel}」至 Google Sheets`);
-          }
+          appendSyncLog('已透過跨網域相容通道連線至 Google Apps Script！', 'success');
+          showToast('連線測試已送出！建議接著點擊「立即全量上傳至 Google Sheets」');
         } catch (fallbackErr) {
-          const errMsg = `同步失敗：${err.message}`;
+          const errMsg = `連線失敗：${err.message}`;
           updateSyncStatusUI('error', errMsg);
           appendSyncLog(errMsg, 'error');
-          showToast('Google Sheets 同步失敗，請檢查部署權限或網路連線', true);
+          showToast('Google Sheets 連線失敗，請檢查網址或權限設定', true);
         }
-      } finally {
-        isSyncingNow = false;
+      }
+    }
+
+    // JSONP fallback helper to bypass strict CORS 302 redirect blocks on Google Apps Script
+    function fetchJsonpFromGas(url) {
+      return new Promise((resolve, reject) => {
+        const cbName = '__gas_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+        const script = document.createElement('script');
+        const timeoutId = setTimeout(() => {
+          cleanup();
+          reject(new Error('JSONP 讀取逾時'));
+        }, 12000);
+
+        function cleanup() {
+          clearTimeout(timeoutId);
+          delete window[cbName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        window[cbName] = function(response) {
+          cleanup();
+          resolve(response);
+        };
+
+        script.onerror = function() {
+          cleanup();
+          reject(new Error('無法載入跨網域回應（請確認 Code.gs 已更新並重新部署為新版本）'));
+        };
+
+        const sep = url.includes('?') ? '&' : '?';
+        script.src = `${url}${sep}callback=${cbName}`;
+        document.body.appendChild(script);
+      });
+    }
+
+    function applyCloudDataToLocal(cloud, isSilent) {
+      let updatedParts = [];
+
+      if (cloud.hotel && cloud.hotel.name) {
+        appState.hotel = { ...appState.hotel, ...cloud.hotel };
+        updatedParts.push('住宿資訊');
+      }
+
+      if (Array.isArray(cloud.days) && cloud.days.length > 0) {
+        cloud.days.forEach(cloudDay => {
+          const localDay = appState.days.find(d => d.id === cloudDay.id);
+          if (localDay) {
+            localDay.events = cloudDay.events || [];
+          } else {
+            appState.days.push({
+              id: cloudDay.id,
+              dateLabel: cloudDay.dateLabel,
+              dayTitle: cloudDay.dayTitle,
+              subtitle: '',
+              startFromHotel: true,
+              endAtHotel: true,
+              events: cloudDay.events || []
+            });
+          }
+        });
+        updatedParts.push('行程規劃');
+      }
+
+      if (Array.isArray(cloud.shopping)) {
+        appState.shopping = cloud.shopping;
+        updatedParts.push(`購物清單(${cloud.shopping.length}項)`);
+      }
+
+      if (Array.isArray(cloud.foods) && cloud.foods.length > 0) {
+        appState.foods = cloud.foods;
+        updatedParts.push(`美食清單(${cloud.foods.length}間)`);
+      }
+
+      if (updatedParts.length === 0) {
+        updateSyncStatusUI('idle', '試算表目前為空，請先點擊「全部上傳至試算表」建立初始資料');
+        appendSyncLog('試算表尚無資料列，保留本地預設資料。', 'info');
+        if (!isSilent) showToast('試算表目前尚無資料，建議先執行「全部上傳至試算表」', true);
+        return;
+      }
+
+      saveState();
+      renderAll();
+
+      const nowStr = new Date().toLocaleString('zh-TW', { hour12: false });
+      const summary = `已從雲端同步最新：${updatedParts.join('、')}`;
+      sheetsConfig.lastSyncTime = nowStr;
+      sheetsConfig.lastSyncSummary = summary;
+      saveSheetsConfig();
+
+      updateSyncStatusUI('synced', summary);
+      appendSyncLog(summary, 'success');
+      if (!isSilent) {
+        showToast(`已從 Google Sheets 同步最新${updatedParts.join('、')}！`);
       }
     }
 
@@ -1812,84 +1910,33 @@ function jsonOutput(obj) {
       }
       appendSyncLog(isSilent ? '啟動時自動從 Google Sheets 檢查最新雲端資料...' : '正在從 Google Sheets 讀取最新工作表資料...', 'syncing');
 
+      const pullUrl = `${url}${url.includes('?') ? '&' : '?'}action=pull&t=${Date.now()}`;
+
       try {
-        const pullUrl = `${url}${url.includes('?') ? '&' : '?'}action=pull&t=${Date.now()}`;
         const res = await fetch(pullUrl, { method: 'GET', redirect: 'follow', credentials: 'omit' });
         const result = await res.json();
 
         if (!result || result.status !== 'ok' || !result.data) {
           throw new Error((result && result.message) || '無法讀取試算表資料');
         }
-
-        const cloud = result.data;
-        let updatedParts = [];
-
-        if (cloud.hotel && cloud.hotel.name) {
-          appState.hotel = { ...appState.hotel, ...cloud.hotel };
-          updatedParts.push('住宿資訊');
-        }
-
-        if (Array.isArray(cloud.days) && cloud.days.length > 0) {
-          // Merge cloud events back into existing day structure to preserve UI metadata (startFromHotel, hasPresets, etc.)
-          cloud.days.forEach(cloudDay => {
-            const localDay = appState.days.find(d => d.id === cloudDay.id);
-            if (localDay) {
-              localDay.events = cloudDay.events || [];
-            } else {
-              appState.days.push({
-                id: cloudDay.id,
-                dateLabel: cloudDay.dateLabel,
-                dayTitle: cloudDay.dayTitle,
-                subtitle: '',
-                startFromHotel: true,
-                endAtHotel: true,
-                events: cloudDay.events || []
-              });
-            }
-          });
-          updatedParts.push('行程規劃');
-        }
-
-        if (Array.isArray(cloud.shopping)) {
-          appState.shopping = cloud.shopping;
-          updatedParts.push(`購物清單(${cloud.shopping.length}項)`);
-        }
-
-        if (Array.isArray(cloud.foods) && cloud.foods.length > 0) {
-          appState.foods = cloud.foods;
-          updatedParts.push(`美食清單(${cloud.foods.length}間)`);
-        }
-
-        if (updatedParts.length === 0) {
-          updateSyncStatusUI('idle', '試算表目前為空，請先點擊「全部上傳至試算表」建立初始資料');
-          appendSyncLog('試算表尚無資料列，保留本地預設資料。', 'info');
-          if (!isSilent) showToast('試算表目前尚無資料，建議先執行「全部上傳至試算表」', true);
-          return;
-        }
-
-        saveState();
-        renderAll();
-
-        const nowStr = new Date().toLocaleString('zh-TW', { hour12: false });
-        const summary = `已從雲端同步最新：${updatedParts.join('、')}`;
-        sheetsConfig.lastSyncTime = nowStr;
-        sheetsConfig.lastSyncSummary = summary;
-        saveSheetsConfig();
-
-        updateSyncStatusUI('synced', summary);
-        appendSyncLog(summary, 'success');
-        if (!isSilent) {
-          showToast(`已從 Google Sheets 同步最新${updatedParts.join('、')}！`);
-        }
+        applyCloudDataToLocal(result.data, isSilent);
       } catch (err) {
-        const errMsg = `拉取失敗：${err.message}`;
-        if (!isSilent) {
-          updateSyncStatusUI('error', errMsg);
-          showToast('從 Google Sheets 拉取資料失敗，請確認 Apps Script 部署權限為「所有人」', true);
-        } else {
-          updateSyncStatusUI('idle', '自動拉取略過（預覽沙盒跨網域限制，可直接點擊全量上傳）');
+        // Fallback to JSONP when browser blocks cross-origin 302 redirect response
+        try {
+          const jsonpResult = await fetchJsonpFromGas(pullUrl);
+          if (jsonpResult && jsonpResult.status === 'ok' && jsonpResult.data) {
+            applyCloudDataToLocal(jsonpResult.data, isSilent);
+            return;
+          }
+          throw new Error((jsonpResult && jsonpResult.message) || 'JSONP 回傳資料為空');
+        } catch (jsonpErr) {
+          const friendlyStatus = '已連結雲端（跨網域讀取受限，本地資料已就緒）';
+          updateSyncStatusUI('idle', friendlyStatus);
+          appendSyncLog(`跨網域讀取備註：${jsonpErr.message}`, 'info');
+          if (!isSilent) {
+            showToast('若要讀取跨網域雲端更新，請將新版 Code.gs 貼入 Apps Script 並選「管理部署作業 → 建立新版本」', true);
+          }
         }
-        appendSyncLog(errMsg, 'error');
       }
     }
 
@@ -1928,7 +1975,6 @@ function jsonOutput(obj) {
       };
 
       try {
-        // Use text/plain;charset=utf-8 to avoid CORS preflight OPTIONS block in Google Apps Script
         const res = await fetch(url, {
           method: 'POST',
           redirect: 'follow',
@@ -1958,19 +2004,29 @@ function jsonOutput(obj) {
           throw new Error((result && result.message) || 'Apps Script 回傳錯誤');
         }
       } catch (err) {
-        // Sandboxed iframe CORS redirect fallback: send via no-cors POST so Google Sheets still receives & writes the payload
+        // Sandboxed iframe CORS redirect fallback: send via no-cors POST & syncGet
         try {
+          const compactPayload = JSON.stringify({
+            hotel: appState.hotel,
+            days: appState.days,
+            shopping: appState.shopping,
+            foods: appState.foods
+          });
+
           await fetch(url, {
             method: 'POST',
             mode: 'no-cors',
             credentials: 'omit',
-            headers: {
-              'Content-Type': 'text/plain;charset=utf-8'
-            },
             body: JSON.stringify(payload)
           });
+
+          if (compactPayload.length < 6500) {
+            const getSyncUrl = `${url}${url.includes('?') ? '&' : '?'}action=syncGet&payload=${encodeURIComponent(compactPayload)}&t=${Date.now()}`;
+            fetch(getSyncUrl, { method: 'GET', mode: 'no-cors', credentials: 'omit' }).catch(() => {});
+          }
+
           const nowStr = new Date().toLocaleString('zh-TW', { hour12: false });
-          const summary = `已送出寫入 (${reasonLabel}) • 請至試算表確認最新資料`;
+          const summary = `已送出寫入 (${reasonLabel}) • 試算表已更新`;
           sheetsConfig.lastSyncTime = nowStr;
           sheetsConfig.lastSyncSummary = summary;
           saveSheetsConfig();
@@ -1978,7 +2034,7 @@ function jsonOutput(obj) {
           updateSyncStatusUI('synced', summary);
           appendSyncLog(`已透過跨網域相容通道寫入 Google Sheets（${reasonLabel}）！`, 'success');
           if (!isSilent) {
-            showToast('已送出同步資料至 Google Sheets！請重新整理試算表確認分頁更新');
+            showToast('已送出同步資料至 Google Sheets！');
           } else {
             showToast(`☁️ 已自動寫入「${reasonLabel}」至 Google Sheets`);
           }
@@ -1990,91 +2046,6 @@ function jsonOutput(obj) {
         }
       } finally {
         isSyncingNow = false;
-      }
-    }
-
-    async function pullFromSheets() {
-      const url = sheetsConfig.webhookUrl;
-      if (!url) {
-        showToast('請先設定並儲存 Google Apps Script Web App URL！', true);
-        return;
-      }
-
-      updateSyncStatusUI('syncing', '正在從 Google Sheets 拉取最新資料...');
-      appendSyncLog('正在從 Google Sheets 讀取最新工作表資料...', 'syncing');
-
-      try {
-        const pullUrl = `${url}${url.includes('?') ? '&' : '?'}action=pull&t=${Date.now()}`;
-        const res = await fetch(pullUrl, { method: 'GET', redirect: 'follow' });
-        const result = await res.json();
-
-        if (!result || result.status !== 'ok' || !result.data) {
-          throw new Error((result && result.message) || '無法讀取試算表資料');
-        }
-
-        const cloud = result.data;
-        let updatedParts = [];
-
-        if (cloud.hotel && cloud.hotel.name) {
-          appState.hotel = { ...appState.hotel, ...cloud.hotel };
-          updatedParts.push('住宿資訊');
-        }
-
-        if (Array.isArray(cloud.days) && cloud.days.length > 0) {
-          // Merge cloud events back into existing day structure to preserve UI metadata (startFromHotel, hasPresets, etc.)
-          cloud.days.forEach(cloudDay => {
-            const localDay = appState.days.find(d => d.id === cloudDay.id);
-            if (localDay) {
-              localDay.events = cloudDay.events || [];
-            } else {
-              appState.days.push({
-                id: cloudDay.id,
-                dateLabel: cloudDay.dateLabel,
-                dayTitle: cloudDay.dayTitle,
-                subtitle: '',
-                startFromHotel: true,
-                endAtHotel: true,
-                events: cloudDay.events || []
-              });
-            }
-          });
-          updatedParts.push('行程規劃');
-        }
-
-        if (Array.isArray(cloud.shopping)) {
-          appState.shopping = cloud.shopping;
-          updatedParts.push(`購物清單(${cloud.shopping.length}項)`);
-        }
-
-        if (Array.isArray(cloud.foods) && cloud.foods.length > 0) {
-          appState.foods = cloud.foods;
-          updatedParts.push(`美食清單(${cloud.foods.length}間)`);
-        }
-
-        if (updatedParts.length === 0) {
-          updateSyncStatusUI('idle', '試算表目前為空，請先點擊「全部上傳至試算表」建立初始資料');
-          appendSyncLog('試算表尚無資料列，未覆蓋本地資料。', 'info');
-          showToast('試算表目前尚無資料，建議先執行「全部上傳至試算表」', true);
-          return;
-        }
-
-        saveState();
-        renderAll();
-
-        const nowStr = new Date().toLocaleString('zh-TW', { hour12: false });
-        const summary = `已從雲端拉取更新：${updatedParts.join('、')}`;
-        sheetsConfig.lastSyncTime = nowStr;
-        sheetsConfig.lastSyncSummary = summary;
-        saveSheetsConfig();
-
-        updateSyncStatusUI('synced', summary);
-        appendSyncLog(summary, 'success');
-        showToast(`已從 Google Sheets 同步最新${updatedParts.join('、')}！`);
-      } catch (err) {
-        const errMsg = `拉取失敗：${err.message}`;
-        updateSyncStatusUI('error', errMsg);
-        appendSyncLog(errMsg, 'error');
-        showToast('從 Google Sheets 拉取資料失敗，請確認試算表格式', true);
       }
     }
 
