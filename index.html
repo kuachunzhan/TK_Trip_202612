@@ -950,21 +950,21 @@ function jsonOutput(obj) {
         </div>
       </form>
     </div>
-  </div>
-
-  <!-- ==================== MODAL: ADD ITINERARY EVENT ==================== -->
+  <!-- ==================== MODAL: ADD / EDIT ITINERARY EVENT ==================== -->
   <div id="event-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-xl border border-slate-100 space-y-4">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-calendar-plus text-indigoTokyo-600"></i>
-          <span>新增行程活動</span>
+        <h3 id="event-modal-title" class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i id="event-modal-icon" class="fa-solid fa-calendar-plus text-indigoTokyo-600"></i>
+          <span id="event-modal-title-text">新增行程活動</span>
         </h3>
         <button onclick="closeAddEventModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
       <form onsubmit="saveNewEvent(event)" class="space-y-3.5">
+        <input type="hidden" id="edit-event-orig-day" value="" />
+        <input type="hidden" id="edit-event-id" value="" />
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">選擇日期 *</label>
@@ -997,7 +997,7 @@ function jsonOutput(obj) {
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">交通方式與轉乘資訊 (選填)</label>
-          <input type="text" id="event-transit" placeholder="例如：京王新線至新宿轉JR山手線（約20分，¥285）" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600" />
+          <textarea id="event-transit" rows="2" placeholder="例如：京王新線至新宿轉JR山手線（約20分，¥285）" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigoTokyo-600"></textarea>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">備註說明</label>
@@ -1005,7 +1005,7 @@ function jsonOutput(obj) {
         </div>
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeAddEventModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50">取消</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-sm font-semibold shadow-xs">加入時間軸</button>
+          <button type="submit" id="event-modal-submit-btn" class="px-5 py-2 rounded-xl bg-indigoTokyo-700 hover:bg-indigoTokyo-800 text-white text-sm font-semibold shadow-xs">加入時間軸</button>
         </div>
       </form>
     </div>
@@ -2211,6 +2211,9 @@ function jsonOutput(obj) {
                     <h4 class="font-bold text-slate-900 text-sm sm:text-base ${ev.done ? 'line-through text-slate-500' : ''}">${escapeHtml(ev.title)}</h4>
                   </div>
                   <div class="flex items-center gap-1 shrink-0">
+                    <button onclick="openEditEventModal('${day.id}', '${ev.id}')" title="編輯此行程" class="w-7 h-7 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 flex items-center justify-center text-xs transition">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
                     <button onclick="openAddEventModal('${day.id}')" title="在此日新增活動" class="w-7 h-7 rounded-lg text-slate-400 hover:text-indigoTokyo-700 hover:bg-indigo-50 flex items-center justify-center text-xs transition">
                       <i class="fa-solid fa-plus"></i>
                     </button>
@@ -2342,6 +2345,12 @@ function jsonOutput(obj) {
     }
 
     function openAddEventModal(defaultDayId = 'day4') {
+      document.getElementById('edit-event-orig-day').value = '';
+      document.getElementById('edit-event-id').value = '';
+      document.getElementById('event-modal-icon').className = 'fa-solid fa-calendar-plus text-indigoTokyo-600';
+      document.getElementById('event-modal-title-text').textContent = '新增行程活動';
+      document.getElementById('event-modal-submit-btn').textContent = '加入時間軸';
+
       document.getElementById('event-day').value = defaultDayId;
       document.getElementById('event-time').value = '';
       document.getElementById('event-title').value = '';
@@ -2351,21 +2360,79 @@ function jsonOutput(obj) {
       document.getElementById('event-modal').classList.remove('hidden');
     }
 
+    function openEditEventModal(dayId, eventId) {
+      const day = appState.days.find(d => d.id === dayId);
+      if (!day) return;
+      const ev = day.events.find(e => e.id === eventId);
+      if (!ev) return;
+
+      document.getElementById('edit-event-orig-day').value = dayId;
+      document.getElementById('edit-event-id').value = eventId;
+      document.getElementById('event-modal-icon').className = 'fa-solid fa-pen-to-square text-amber-600';
+      document.getElementById('event-modal-title-text').textContent = '編輯行程活動';
+      document.getElementById('event-modal-submit-btn').textContent = '儲存修改';
+
+      document.getElementById('event-day').value = dayId;
+      document.getElementById('event-time').value = ev.time || '';
+      document.getElementById('event-title').value = ev.title || '';
+      document.getElementById('event-tag').value = ev.tag || '自由推薦';
+      document.getElementById('event-transit').value = ev.transit || '';
+      document.getElementById('event-note').value = ev.note || '';
+      document.getElementById('event-modal').classList.remove('hidden');
+    }
+
     function closeAddEventModal() {
       document.getElementById('event-modal').classList.add('hidden');
     }
 
     function saveNewEvent(e) {
       e.preventDefault();
-      const dayId = document.getElementById('event-day').value;
+      const origDayId = document.getElementById('edit-event-orig-day').value;
+      const editEventId = document.getElementById('edit-event-id').value;
+      const targetDayId = document.getElementById('event-day').value;
       const time = document.getElementById('event-time').value.trim();
       const title = document.getElementById('event-title').value.trim();
       const tag = document.getElementById('event-tag').value;
       const transit = document.getElementById('event-transit').value.trim();
       const note = document.getElementById('event-note').value.trim();
 
-      const day = appState.days.find(d => d.id === dayId);
-      if (day && title) {
+      if (!title) return;
+
+      if (editEventId && origDayId) {
+        const origDay = appState.days.find(d => d.id === origDayId);
+        const targetDay = appState.days.find(d => d.id === targetDayId);
+        if (origDay && targetDay) {
+          const evIndex = origDay.events.findIndex(item => item.id === editEventId);
+          if (evIndex !== -1) {
+            const existingEv = origDay.events[evIndex];
+            const updatedEv = {
+              ...existingEv,
+              time: time || '彈性時間',
+              title,
+              tag,
+              transit,
+              note
+            };
+
+            if (origDayId === targetDayId) {
+              origDay.events[evIndex] = updatedEv;
+            } else {
+              origDay.events.splice(evIndex, 1);
+              targetDay.events.push(updatedEv);
+            }
+
+            saveState();
+            renderItinerary();
+            closeAddEventModal();
+            triggerAutoSync(`編輯行程：${title}`);
+            showToast(`已更新「${title}」並儲存！`);
+            return;
+          }
+        }
+      }
+
+      const day = appState.days.find(d => d.id === targetDayId);
+      if (day) {
         day.events.push({
           id: 'ev-' + Date.now(),
           time: time || '彈性時間',
