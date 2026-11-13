@@ -633,6 +633,28 @@
                 </label>
               </div>
             </div>
+
+            <div class="space-y-2.5">
+              <label class="block text-xs font-semibold text-slate-700">Google Apps Script Web App URL（結尾須為 <code class="text-emerald-700">/exec</code>）</label>
+              <div class="flex flex-col sm:flex-row gap-2">
+                <input type="url" id="input-gas-url" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                <button type="button" onclick="pasteGasUrl()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition shrink-0">貼上</button>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 pt-1">
+                <button type="button" onclick="saveGasConfig()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-floppy-disk"></i>
+                  <span>儲存 API 設定</span>
+                </button>
+                <button type="button" onclick="testGasConnection()" class="px-3.5 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-xs font-semibold transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-plug-circle-check"></i>
+                  <span>測試連線</span>
+                </button>
+                <button type="button" onclick="openGasTestInNewTab()" class="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 text-xs font-semibold transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  <span>新分頁直接檢查 API 回傳</span>
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Manual Bidirectional Sync Actions -->
@@ -720,8 +742,7 @@
                 </button>
               </div>
               <pre id="gas-script-template" class="bg-slate-900 text-emerald-300 rounded-xl p-3 text-[11px] font-mono overflow-x-auto max-h-60 leading-relaxed select-all">// ==========================================
-// 東京六天五夜好友之旅 - Google Sheets 同步 API
-// 自動維護：行程規劃 (Itinerary)、購物清單 (ShoppingList)、美食清單 (FoodList)
+// 東京六天五夜好友之旅 - Google Sheets 同步 API (乾淨完整版)
 // ==========================================
 
 function doGet(e) {
@@ -761,34 +782,6 @@ function doGet(e) {
   return jsonOutput({ status: 'ok', data: data }, callback);
 }
 
-  // 支援透過 GET 參數寫入（解決部分沙盒環境 POST 跨網域限制）
-  if (action === 'syncGet' && e.parameter && e.parameter.payload) {
-    var lock = LockService.getScriptLock();
-    lock.waitLock(10000);
-    try {
-      var payload = JSON.parse(e.parameter.payload);
-      if (payload.hotel) writeHotelSheet(ss, payload.hotel);
-      if (payload.days) writeItinerarySheet(ss, payload.days);
-      if (payload.shopping) writeShoppingSheet(ss, payload.shopping);
-      if (payload.foods) writeFoodSheet(ss, payload.foods);
-      return jsonOutput({ status: 'ok', syncedAt: new Date().toISOString() });
-    } catch (err) {
-      return jsonOutput({ status: 'error', message: err.toString() });
-    } finally {
-      lock.releaseLock();
-    }
-  }
-
-  var data = {
-    hotel: readHotelSheet(ss),
-    days: readItinerarySheet(ss),
-    shopping: readShoppingSheet(ss),
-    foods: readFoodSheet(ss),
-    pulledAt: new Date().toISOString()
-  };
-  return jsonOutput({ status: 'ok', data: data });
-}
-
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.waitLock(10000);
@@ -808,12 +801,7 @@ function doPost(e) {
 
     return jsonOutput({
       status: 'ok',
-      syncedAt: new Date().toISOString(),
-      counts: {
-        days: payload.days ? payload.days.length : 0,
-        shopping: payload.shopping ? payload.shopping.length : 0,
-        foods: payload.foods ? payload.foods.length : 0
-      }
+      syncedAt: new Date().toISOString()
     });
   } catch (err) {
     return jsonOutput({ status: 'error', message: err.toString() });
@@ -943,6 +931,12 @@ function readFoodSheet(ss) {
       priceRange: String(r[6]),
       reservation: String(r[7]),
       suggestedTime: String(r[8]),
+      transit: String(r[9]),
+      visited: String(r[10]).toUpperCase() === 'TRUE'
+    };
+  });
+}
+
 function jsonOutput(obj, callback) {
   var jsonStr = JSON.stringify(obj);
   if (callback) {
